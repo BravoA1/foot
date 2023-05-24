@@ -1,15 +1,11 @@
 const API_POOLS = "/api/pools";
 
-export async function getPoolsList() {
-  const response = await fetch(API_POOLS);
-  const backResponse = await response.json();
-  if (response.ok) {
+export async function fetchPoolsList() {
+  try {
+    const response = await fetch(`${API_POOLS}/fetchPoolsList`);
+    const backResponse = await response.json();
     return backResponse;
-  } else {
-    if (backResponse) {
-      throw backResponse;
-    } else {
-      throw new Error("Error getPoolsList");
-    }
+  } catch (error) {
+    throw error;
   }
 }

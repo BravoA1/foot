@@ -29,7 +29,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `bet` (
   `pool_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `score1` int(11) DEFAULT NULL,
   `score2` int(11) DEFAULT NULL,
   `score3` int(11) DEFAULT NULL,
@@ -108,9 +108,9 @@ CREATE TABLE `user` (
 -- Indexes for table `bet`
 --
 ALTER TABLE `bet`
-  ADD PRIMARY KEY (`pool_id`,`user_id`),
+  ADD PRIMARY KEY (`pool_id`,`id`),
   ADD KEY `pool_id` (`pool_id`),
-  ADD KEY `user_id` (`user_id`);
+  ADD KEY `id` (`id`);
 
 --
 -- Indexes for table `pool`
@@ -178,7 +178,7 @@ ALTER TABLE `user`
 --
 ALTER TABLE `bet`
   ADD CONSTRAINT `bet_ibfk_1` FOREIGN KEY (`pool_id`) REFERENCES `pool` (`id`),
-  ADD CONSTRAINT `bet_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`);
+  ADD CONSTRAINT `bet_ibfk_2` FOREIGN KEY (`id`) REFERENCES `user` (`id`);
 
 --
 -- Constraints for table `pool`

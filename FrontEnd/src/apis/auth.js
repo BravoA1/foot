@@ -21,9 +21,9 @@ export async function signin(credentials) {
   }
 }
 
-export async function getCurrentUser() {
-  const response = await fetch(`${API_AUTH}/getCurrentUser`);
-  console.log(response);
+export async function fetchCurrentUser() {
+  const response = await fetch(`${API_AUTH}/fetchCurrentUser`);
+  //console.log(response);
   return response.ok ? response.json() : false;
 }
 

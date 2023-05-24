@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import styles from "./Login.module.scss";
-import SignUp from "./SignUp";
+import Signup from "./Signup";
 import Signin from "./Signin";
 import { Navigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
@@ -20,7 +20,7 @@ export default function Login() {
           className={` d-flex align-items-center justify-content-center flex-fill ${styles.mainContain}`}
         >
           <div className={`${styles.main}`}>
-            <SignUp handleClick={handleClick} loginActive={loginActive} />
+            <Signup handleClick={handleClick} loginActive={loginActive} />
             <Signin handleClick={handleClick} loginActive={loginActive} />
           </div>
         </div>

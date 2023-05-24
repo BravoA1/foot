@@ -5,16 +5,16 @@ const connection = require("../../database/index");
 const { key, keyPub } = require("../../keys");
 
 router.post("/", async (req, res) => {
-  const email = req.body.user_mail;
-  const password = req.body.user_password;
+  const email = req.body.email;
+  const password = req.body.password;
 
-  const sqlVerify = `SELECT * FROM user WHERE user_mail = ?`;
-  connection.query(sqlVerify, [email], (err, result) => {
+  const sqlVerify = `SELECT * FROM user WHERE email = ?`;
+  connection.query(sqlVerify, email, (err, result) => {
     try {
       if (result.length > 0) {
         const user = result[0];
-        const userId = user.user_id;
-        if (bcrypt.compareSync(password, user.user_password)) {
+        const userId = user.id;
+        if (bcrypt.compareSync(password, user.password)) {
           const token = jsonwebtoken.sign({}, key, {
             subject: userId.toString(),
             expiresIn: 3600 * 24 * 30 * 6,
@@ -41,14 +41,14 @@ router.post("/", async (req, res) => {
   });
 });
 
-router.get("/getCurrentUser", async (req, res) => {
+router.get("/fetchCurrentUser", async (req, res) => {
   const { token } = req.cookies;
   if (token) {
     try {
       const decodedToken = jsonwebtoken.verify(token, keyPub, {
         algorithms: "RS256",
       });
-      const sqlVerify = `SELECT user_id, user_name, user_firstname FROM user WHERE user_id=${decodedToken.sub}`;
+      const sqlVerify = `SELECT id, username FROM user WHERE id=${decodedToken.sub}`;
       connection.query(sqlVerify, (err, result) => {
         const currentUser = result[0];
         if (currentUser) {
