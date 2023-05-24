@@ -1,0 +1,62 @@
+.container{
+    flex-direction: column;
+    width: 80%;
+    .bar{
+        background-color: var(--primary);
+        width: 100%;
+        height: 30%;
+        margin-bottom: 3%;
+        border-radius: 10px;
+        .title{
+            /* Extra small devices (phones, 600px and down) */
+            @media only screen and (max-width: 400px) {
+                font-size: 20px;
+                width: 35%;
+            }
+            /* Extra small devices (phones, 600px and down) */
+            @media only screen and (max-width: 600px) {
+                font-size: 20px;
+            }
+
+            /* Small devices (portrait tablets and large phones, 600px and up) */
+            @media only screen and (min-width: 600px) {
+                font-size: 25px;
+            }
+
+            /* Medium devices (landscape tablets, 768px and up) */
+            @media only screen and (min-width: 768px) {
+                font-size: 25px;
+            }
+
+            /* Large devices (laptops/desktops, 992px and up) */
+            @media only screen and (min-width: 992px) {
+                font-size: 32px;
+            }
+
+            /* Extra large devices (large laptops and desktops, 1200px and up) */
+            @media only screen and (min-width: 1200px){
+                font-size: 44px;
+            }
+            width: 22%;
+            color: white;
+        }
+
+        .items{
+            width: 78%;
+            color: white;
+
+            .item{
+                /* Extra small devices (phones, 600px and down) */
+                @media only screen and (max-width: 600px) {
+                    font-size: 20px;
+                    width: 50%;
+
+                }
+                margin: 2%;
+                width: 30%;
+                height: 90%;
+            }
+        }
+    }
+}
+

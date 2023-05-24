@@ -1,0 +1,26 @@
+@use "../../../assets/styles/mixins.scss" as mixin;
+
+.menuContainer {
+  top: 20px;
+  left: 140px;
+  width: 64%;
+  background-color: var(--background-color);
+  z-index: 55;
+  @include mixin.sm-min {
+    display: none;
+  }
+
+  button {
+    border-radius: 20px;
+    cursor: pointer;
+    @include mixin.xs {
+      width: 40px;
+      height: 40px;
+    }
+    &:hover {
+      box-shadow: 2px -8px 25px 2px rgba(0, 0, 0, 0.22);
+      transition: 0.2s opacity;
+      opacity: 0.8;
+    }
+  }
+}

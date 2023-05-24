@@ -1,0 +1,57 @@
+.login {
+	height: 480px;
+	background: white;
+	border-radius: 60%/10%;
+	transform: translateY(-160px);
+	transition: 0.8s ease-in-out;
+	.labelLogin:hover {
+		color: #798eb2;
+		transform: scale(0.7);
+	}
+	& label {
+		color: #15223b;
+		padding: 10px;
+		transform: scale(0.6);
+	}
+
+	&.active {
+		transform: translateY(-565px);
+	}
+
+	&.active label {
+		transform: scale(1);
+		margin: 60px;
+	}
+	label {
+		// color: #fff;
+		font-size: 2rem;
+		justify-content: center;
+		display: flex;
+		margin: 30px;
+		font-weight: bold;
+		cursor: pointer;
+		transition: 0.5s ease-in-out;
+	}
+
+	input {
+		color: #15223b;
+		width: 80%;
+		height: 20px;
+		background: #e0dede;
+		justify-content: center;
+		display: flex;
+		margin: 20px auto;
+		padding: 20px;
+		border: none;
+		outline: none;
+		border-radius: 5px;
+	}
+	.forgetPassword {
+		color: #15223b;
+		margin-top: 10px;
+		margin-left: 10px;
+		&:hover {
+			color: #798eb2;
+		}
+	}
+}

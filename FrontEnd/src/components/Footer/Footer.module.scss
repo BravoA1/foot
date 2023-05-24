@@ -1,0 +1,90 @@
+@use "../../assets/styles/mixins.scss" as mixin;
+
+.topPage {
+	background-color: #23395d;
+	text-align: center;
+	color: #fff;
+	cursor: pointer;
+	&:hover {
+		opacity: 90%;
+	}
+}
+
+footer {
+	margin: 0;
+	padding: 20px;
+	background-color: #15223b;
+	display: flex;
+	justify-content: center;
+	.logo {
+		width: 200px;
+		margin-top: auto;
+		margin-bottom: auto;
+	}
+	.col {
+		width: 190px;
+		height: auto;
+		float: left;
+		box-sizing: border-box;
+		-webkit-box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		padding: 0px 20px 20px 20px;
+		h1 {
+			margin: 0;
+			padding: 0;
+			font-size: 14px;
+			padding: 20px 0px 5px 0px;
+			color: #fff;
+			font-weight: bold;
+			text-transform: uppercase;
+		}
+		ul {
+			list-style-type: none;
+			margin: 0;
+			padding: 0;
+			li {
+				color: #999999;
+				font-size: 12px;
+				padding: 5px 0px 5px 0px;
+				cursor: pointer;
+				transition: 0.2s;
+				-webkit-transition: 0.2s;
+				-moz-transition: 0.2s;
+				&:hover {
+					display: inline-block;
+					padding-right: 5px !important;
+					padding-left: 5px !important;
+					scale: 1.05;
+				}
+			}
+		}
+		.social {
+			display: flex;
+		}
+	}
+}
+@media only screen and (min-width: 1280px) {
+	.col {
+		width: 1200px;
+		margin: 0 auto;
+	}
+}
+@media only screen and (max-width: 1139px) {
+	
+	.logo {
+		margin: 20px;
+	}
+	.col .social {
+		width: 1000px;
+		display: block;
+	}
+	.social h1 {
+		margin: 0px;
+	}
+}
+@media only screen and (max-width: 800px) {
+	footer {
+		display: block;
+	}
+
+}

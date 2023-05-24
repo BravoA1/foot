@@ -1,0 +1,41 @@
+@use "../../assets/styles/mixins.scss" as mixin;
+
+.header {
+	box-shadow: var(--box-shadow);
+	background-color: #15223b;
+	color: white;
+	height: 80px;
+	.button {
+		height: max-content;
+		width: fit-content;
+		color: #fff;
+		padding: 30px 20px;
+		&:hover {
+			background-color: #23395d;
+		}
+	}
+	img {
+		width: 200px;
+		@include mixin.xs {
+			width: 110px;
+		}
+	}
+	.desktopHeader {
+		@include mixin.xs {
+			display: none;
+		}
+		width: 100%;
+	}
+	i {
+		font-size: 1.8rem;
+		display: none;
+		cursor: pointer;
+		transition: opacity 0.2s;
+		&:hover {
+			opacity: 0.8;
+		}
+		@include mixin.xs {
+			display: flex;
+		}
+	}
+}
