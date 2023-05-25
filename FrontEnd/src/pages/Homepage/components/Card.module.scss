@@ -22,3 +22,16 @@
   width: 70px;
   padding: 10px;
 }
+
+.icon {
+  width: 70px;
+  height: 70px;
+  background-color: var(--primary);
+  border-radius: 50px;
+  img {
+    scale: 70%;
+  }
+  &:hover {
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.5);
+  }
+}

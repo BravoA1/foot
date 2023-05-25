@@ -48,8 +48,8 @@ router.get("/fetchCurrentUser", async (req, res) => {
       const decodedToken = jsonwebtoken.verify(token, keyPub, {
         algorithms: "RS256",
       });
-      const sqlVerify = `SELECT id, username FROM user WHERE id=${decodedToken.sub}`;
-      connection.query(sqlVerify, (err, result) => {
+      const sqlVerify = "SELECT * FROM user WHERE id=?";
+      connection.query(sqlVerify, decodedToken.sub, (err, result) => {
         const currentUser = result[0];
         if (currentUser) {
           return res.send(currentUser);

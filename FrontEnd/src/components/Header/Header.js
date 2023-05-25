@@ -29,7 +29,6 @@ export default function Header() {
       <div className={``}>
         <div className={`${styles.button}d-flex justify-content-star`}>
           <Link to="/">
-            {" "}
             <img src={logo} alt="Logo" />
           </Link>
         </div>

@@ -2,7 +2,9 @@ const router = require("express").Router();
 const connection = require("../../database/index");
 
 router.get("/fetchPoolsList", async (req, res) => {
-  const sql = `SELECT team1.name AS name1, team2.name AS name2, team3.name AS name3, team4.name AS name4, pool.score1, pool.score2, pool.score3, pool.score4 
+  const sql = `SELECT pool.id, team1.name AS name1, team2.name AS name2, 
+  team3.name AS name3, team4.name AS name4, pool.score1, pool.score2, 
+  pool.score3, pool.score4 
   FROM pool 
   LEFT JOIN team AS team1 ON pool.team_1_id=team1.id 
   LEFT JOIN team AS team2 ON pool.team_2_id=team2.id 
@@ -20,6 +22,20 @@ router.get("/fetchPoolsList", async (req, res) => {
     } else {
       res.send(JSON.stringify(null));
     }
+  });
+});
+
+router.post("/", async (req, res) => {
+  const team_1_id = req.body.team_1_id;
+  const team_2_id = req.body.team_2_id;
+  const team_3_id = req.body.team_3_id;
+  const team_4_id = req.body.team_4_id;
+  const tournament_id = 1;
+  const values = [team_1_id, team_2_id, team_3_id, team_4_id, tournament_id];
+  const sql =
+    "INSERT INTO pool (team_1_id, team_2_id, team_3_id, team_4_id, tournament_id) VALUES (?, ?, ?, ?, ?)";
+  connection.query(sql, values, (err, result) => {
+    if (err) throw err;
   });
 });
 

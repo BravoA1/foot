@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { AuthContext } from "../../context/AuthContext";
-import { Link } from "react-router-dom";
 
 export default function Signin({ handleClick, loginActive }) {
   const { signin } = useContext(AuthContext);
@@ -77,9 +76,6 @@ export default function Signin({ handleClick, loginActive }) {
         <button disabled={isSubmitting} className="btnLogin">
           Connexion
         </button>
-        <Link to="/forgotpassword">
-          <p className={`${styles.forgetPassword}`}>Mot de passe oublié?</p>
-        </Link>
       </form>
     </div>
   );
