@@ -35,3 +35,16 @@ export async function updatePool(pool) {
   if (response.ok) return backResponse;
   throw backResponse ? backResponse : new Error("Error updatePool");
 }
+
+export async function deletePool(pool) {
+  const response = await fetch(`${API_POOLS}/deletePool`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(pool),
+  });
+  const backResponse = await response.json();
+  if (response.ok) return backResponse;
+  throw backResponse ? backResponse : new Error("Error deletePool");
+}

@@ -31,10 +31,25 @@ router.post("/insertPool", async (req, res) => {
   const team_2_id = req.body.team_2_id;
   const team_3_id = req.body.team_3_id;
   const team_4_id = req.body.team_4_id;
+  const score1 = req.body.score1;
+  const score2 = req.body.score2;
+  const score3 = req.body.score3;
+  const score4 = req.body.score4;
   const tournament_id = 1;
-  const values = [team_1_id, team_2_id, team_3_id, team_4_id, tournament_id];
-  const sql =
-    "INSERT INTO pool (team_1_id, team_2_id, team_3_id, team_4_id, tournament_id) VALUES (?, ?, ?, ?, ?)";
+  const values = [
+    team_1_id,
+    team_2_id,
+    team_3_id,
+    team_4_id,
+    tournament_id,
+    score1,
+    score2,
+    score3,
+    score4,
+  ];
+  const sql = `INSERT INTO pool 
+    (team_1_id, team_2_id, team_3_id, team_4_id, tournament_id, score1, score2, score3, score4) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
   connection.query(sql, values, (err, result) => {
     if (err) throw err;
   });
@@ -47,17 +62,35 @@ router.post("/updatePool", async (req, res) => {
   const team_4_id = req.body.team_4_id;
   const tournament_id = 1;
   const pool_id = req.body.id;
+  const score1 = req.body.score1;
+  const score2 = req.body.score2;
+  const score3 = req.body.score3;
+  const score4 = req.body.score4;
   const values = [
     team_1_id,
     team_2_id,
     team_3_id,
     team_4_id,
     tournament_id,
+    score1,
+    score2,
+    score3,
+    score4,
     pool_id,
   ];
-  const sql =
-    "UPDATE pool SET team_1_id=?, team_2_id=?, team_3_id=?, team_4_id=?, tournament_id=? WHERE id=?";
+  const sql = `UPDATE pool SET 
+    team_1_id=?, team_2_id=?, team_3_id=?, team_4_id=?, tournament_id=?, score1=?, score2=?, score3=?, score4=? 
+    WHERE id=?`;
   connection.query(sql, values, (err, result) => {
+    if (err) throw err;
+  });
+});
+
+router.post("/deletePool", async (req, res) => {
+  const pool_id = req.body.id;
+  const sql = "DELETE FROM pool WHERE id=?";
+  console.log("deletePool: ", pool_id);
+  connection.query(sql, pool_id, (err, result) => {
     if (err) throw err;
   });
 });

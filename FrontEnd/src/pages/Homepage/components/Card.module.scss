@@ -21,6 +21,11 @@
 .card_scores {
   width: 70px;
   padding: 10px;
+  p {
+    input {
+      width: 50px;
+    }
+  }
 }
 
 .icon {
