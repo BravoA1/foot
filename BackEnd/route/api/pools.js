@@ -2,7 +2,8 @@ const router = require("express").Router();
 const connection = require("../../database/index");
 
 router.get("/fetchPoolsList", async (req, res) => {
-  const sql = `SELECT pool.id, team1.name AS name1, team2.name AS name2, 
+  const sql = `SELECT pool.id, pool.team_1_id, pool.team_2_id, pool.team_3_id, 
+  pool.team_4_id, team1.name AS name1, team2.name AS name2, 
   team3.name AS name3, team4.name AS name4, pool.score1, pool.score2, 
   pool.score3, pool.score4 
   FROM pool 
@@ -25,7 +26,7 @@ router.get("/fetchPoolsList", async (req, res) => {
   });
 });
 
-router.post("/", async (req, res) => {
+router.post("/insertPool", async (req, res) => {
   const team_1_id = req.body.team_1_id;
   const team_2_id = req.body.team_2_id;
   const team_3_id = req.body.team_3_id;
@@ -34,6 +35,28 @@ router.post("/", async (req, res) => {
   const values = [team_1_id, team_2_id, team_3_id, team_4_id, tournament_id];
   const sql =
     "INSERT INTO pool (team_1_id, team_2_id, team_3_id, team_4_id, tournament_id) VALUES (?, ?, ?, ?, ?)";
+  connection.query(sql, values, (err, result) => {
+    if (err) throw err;
+  });
+});
+
+router.post("/updatePool", async (req, res) => {
+  const team_1_id = req.body.team_1_id;
+  const team_2_id = req.body.team_2_id;
+  const team_3_id = req.body.team_3_id;
+  const team_4_id = req.body.team_4_id;
+  const tournament_id = 1;
+  const pool_id = req.body.id;
+  const values = [
+    team_1_id,
+    team_2_id,
+    team_3_id,
+    team_4_id,
+    tournament_id,
+    pool_id,
+  ];
+  const sql =
+    "UPDATE pool SET team_1_id=?, team_2_id=?, team_3_id=?, team_4_id=?, tournament_id=? WHERE id=?";
   connection.query(sql, values, (err, result) => {
     if (err) throw err;
   });

@@ -4,7 +4,7 @@ import edit_icon from "../../../assets/images/icon-edit.svg";
 import plus_icon from "../../../assets/images/icon-plus.svg";
 import { useState, useEffect } from "react";
 import { fetchTeamsList } from "../../../apis/teams";
-import { insertPool } from "../../../apis/pools";
+import { updatePool } from "../../../apis/pools";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -23,7 +23,9 @@ function PoolCard({ pool, edit }) {
     fetchAndSetTeamsList();
   }, []);
   function handleIdleClick() {
-    setIdle(!idle);
+    if (idle) {
+      setIdle(false);
+    } else setIdle(true);
   }
   const validationSchema = yup.object({
     team_1_id: yup.string().required("selectionner une valeur"),
@@ -31,12 +33,6 @@ function PoolCard({ pool, edit }) {
     team_3_id: yup.string().required("selectionner une valeur"),
     team_4_id: yup.string().required("selectionner une valeur"),
   });
-  const initialValues = {
-    team_1_id: pool.team_1_id,
-    team_2_id: pool.team_2_id,
-    team_3_id: pool.team_3_id,
-    team_4_id: pool.team_4_id,
-  };
   const {
     handleSubmit,
     register,
@@ -44,9 +40,18 @@ function PoolCard({ pool, edit }) {
     formState: { isSubmitting },
     //setError,
     //clearErrors,
-  } = useForm({ initialValues, resolver: yupResolver(validationSchema) });
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+    defaultValues: {
+      team_1_id: pool.team_1_id,
+      team_2_id: pool.team_2_id,
+      team_3_id: pool.team_3_id,
+      team_4_id: pool.team_4_id,
+    },
+  });
   const submit = handleSubmit((values) => {
-    insertPool(values);
+    values.id = pool.id;
+    updatePool(values);
     setIdle(true);
     window.location.reload(false);
   });
