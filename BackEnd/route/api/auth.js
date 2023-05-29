@@ -19,8 +19,8 @@ router.post("/", async (req, res) => {
             subject: userId.toString(),
             expiresIn: 3600 * 24 * 30 * 6,
             algorithm: "RS256",
+            //SameSite: None,
           });
-          // console.log(res.cookie("token", token));
           res.cookie("token", token);
           res.send(user);
         } else {

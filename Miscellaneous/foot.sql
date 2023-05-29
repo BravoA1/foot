@@ -75,6 +75,18 @@ INSERT INTO `team` (`id`, `name`) VALUES
 (2, 'France'),
 (3, 'Brasil'),
 (4, 'Argentina');
+(5, 'Germany');
+(6, 'Mexico');
+(7, 'Spain');
+(8, 'England');
+(9, 'Belgium');
+(10, 'Uruguay');
+(11, 'Serbia');
+(12, 'Switzerland');
+(13, 'Sweden');
+(14, 'Japan');
+(15, 'Croatia');
+(16, 'Portugal');
 
 -- --------------------------------------------------------
 

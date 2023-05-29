@@ -19,8 +19,11 @@ router.get("/fetchTeamsList", async (req, res) => {
 router.post("/", async (req, res) => {
   const name = req.body.name;
   const sql = "INSERT INTO team (name) VALUES (?)";
-  connection.query(sql, name, (err, result) => {
-    if (err) throw err;
+  connection.query(sql, name, (error, result) => {
+    if (error) {
+      console.error("Error executing MySQL query:", error);
+      res.status(500).send("Error executing MySQL query");
+    }
   });
 });
 

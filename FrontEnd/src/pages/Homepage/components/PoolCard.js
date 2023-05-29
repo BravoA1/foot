@@ -6,19 +6,10 @@ import close_icon from "../../../assets/images/icon-close.svg";
 import delete_icon from "../../../assets/images/icon-delete.svg";
 import { useState, useEffect } from "react";
 import { fetchTeamsList } from "../../../apis/teams";
-import { insertPool, updatePool, deletePool } from "../../../apis/pools";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
-/*
- * A pool card has 4 states:
- *   - 0 normal: display names of the four teams and stuffs
- *   - 1 superuser create new pool: icon add
- *   - 2 superuser insert new pool: edition is enabled + icon register + icon cancel
- *   - 3 superuser edit not triggered: normal + icon edit at bottom
- *   - 4 superuser update existing pool: edition is enabled + icon register + icon cancel
- */
 /*
  * A pool card has 3 states:
  *   - 0 normal: display names of the four teams and stuffs
@@ -30,20 +21,43 @@ import { yupResolver } from "@hookform/resolvers/yup";
  *                 - case edit pool: edition is enabled + icon register + icon cancel
  */
 
-//function PoolCard({ pool, edit, plus }) {
-function PoolCard({ pool, mainEditBtnToggled, newPool = false }) {
-  const [teamsList, setTeamsList] = useState(null);
+function PoolCard({
+  pool = null,
+  mainEditBtnToggled,
+  newPool = false,
+  handleAdd,
+  handleDelete,
+  handleUpdate,
+}) {
+  const [teamsList, setTeamsList] = useState([]);
+  const [positionsList, setPositionsList] = useState([]);
   const [localeEditBtnToggled, setLocaleEditBtnToggled] = useState(false);
+
+  function getTeamPositions(pool) {
+    const scores = [pool.score1, pool.score2, pool.score3, pool.score4];
+
+    // Sort the scores in descending order
+    const sortedScores = scores.slice().sort((a, b) => b - a);
+
+    // Map the positions based on the sorted scores
+    const positions = scores.map((score) => sortedScores.indexOf(score) + 1);
+
+    return positions;
+  }
+
   useEffect(() => {
     const fetchAndSetTeamsList = async () => {
-      const data = await fetchTeamsList();
-      //console.log(data);
-      if (data.length > 0) {
-        setTeamsList(data);
+      try {
+        const data = await fetchTeamsList();
+        //const data = await response.json();
+        if (data.length > 0) setTeamsList(data);
+      } catch (error) {
+        console.log("Error fetchAndSetTeamList:", error);
       }
     };
     fetchAndSetTeamsList();
-  }, []);
+    setPositionsList(pool ? getTeamPositions(pool) : []);
+  }, [pool]);
   function handleLocaleEditBtnToggle() {
     setLocaleEditBtnToggled(!localeEditBtnToggled);
   }
@@ -51,23 +65,45 @@ function PoolCard({ pool, mainEditBtnToggled, newPool = false }) {
     setLocaleEditBtnToggled(false);
   }
   async function handleLocaleDeleteBtnToggle() {
-    const response = await deletePool(pool);
-    console.log(response.json());
-    window.location.reload(false);
+    handleDelete(pool);
   }
   const validationSchema = yup.object({
-    team_1_id: yup.string().required("sélectionner une valeur"),
-    team_2_id: yup.string().required("sélectionner une valeur"),
-    team_3_id: yup.string().required("sélectionner une valeur"),
-    team_4_id: yup.string().required("sélectionner une valeur"),
+    team_1_id: yup
+      .number()
+      .typeError("select all nations")
+      .notOneOf(
+        [yup.ref("team_2_id"), yup.ref("team_3_id"), yup.ref("team_4_id")],
+        "already picked"
+      ),
+    team_2_id: yup
+      .number()
+      .typeError("select all nations")
+      .notOneOf(
+        [yup.ref("team_1_id"), yup.ref("team_3_id"), yup.ref("team_4_id")],
+        "already picked"
+      ),
+    team_3_id: yup
+      .number()
+      .typeError("select all nations")
+      .notOneOf(
+        [yup.ref("team_2_id"), yup.ref("team_1_id"), yup.ref("team_4_id")],
+        "already picked"
+      ),
+    team_4_id: yup
+      .number()
+      .typeError("select all nations")
+      .notOneOf(
+        [yup.ref("team_2_id"), yup.ref("team_3_id"), yup.ref("team_1_id")],
+        "already picked"
+      ),
   });
   const {
     handleSubmit,
     register,
-    //formState: { errors, isSubmitting },
-    formState: { isSubmitting },
+    formState: { errors, isSubmitting },
+    //formState: { isSubmitting },
     //setError,
-    //clearErrors,
+    clearErrors,
   } = useForm({
     resolver: yupResolver(validationSchema),
     defaultValues: {
@@ -75,30 +111,22 @@ function PoolCard({ pool, mainEditBtnToggled, newPool = false }) {
       team_2_id: pool ? pool.team_2_id : "",
       team_3_id: pool ? pool.team_3_id : "",
       team_4_id: pool ? pool.team_4_id : "",
-      score1: pool ? pool.score1 : "",
-      score2: pool ? pool.score2 : "",
-      score3: pool ? pool.score3 : "",
-      score4: pool ? pool.score4 : "",
+      score1: pool ? pool.score1 : 0,
+      score2: pool ? pool.score2 : 0,
+      score3: pool ? pool.score3 : 0,
+      score4: pool ? pool.score4 : 0,
     },
   });
   const submit = handleSubmit((values) => {
+    clearErrors();
     if (newPool) {
-      insertPool(values);
-      window.location.reload(false);
-      return;
+      handleAdd(values);
+      setLocaleEditBtnToggled(false);
     } else {
       values.id = pool.id;
-      updatePool(values);
-      window.location.reload(false);
-      return;
+      handleUpdate(values);
+      setLocaleEditBtnToggled(false);
     }
-    // if ((state = 2)) insertPool(values);
-    // else {
-    //   values.id = pool.id;
-    //   updatePool(values);
-    // }
-    // setIdle(true);
-    // window.location.reload(false);
   });
   return (
     <div className="d-flex flex-column align-items-center">
@@ -110,97 +138,159 @@ function PoolCard({ pool, mainEditBtnToggled, newPool = false }) {
       {!localeEditBtnToggled && !newPool && (
         <Link to={`/login`}>
           <div className={`${style.card}`}>
-            <div className={`${style.card_teams}`}>
-              <p>{pool.name1}</p>
-              <p>{pool.name2}</p>
-              <p>{pool.name3}</p>
-              <p>{pool.name4}</p>
-            </div>
-            <div className={`${style.card_scores}`}>
-              <p>{pool.score1}</p>
-              <p>{pool.score2}</p>
-              <p>{pool.score3}</p>
-              <p>{pool.score4}</p>
-            </div>
+            <table className={`${style.scoreTable}`}>
+              <thead>
+                <tr>
+                  <th>Teams</th>
+                  <th>Scores</th>
+                  <th>Position</th>
+                  <th>Bet</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{pool.name1}</td>
+                  <td>{pool.score1}</td>
+                  <td>{positionsList[0]}</td>
+                </tr>
+                <tr>
+                  <td>{pool.name2}</td>
+                  <td>{pool.score2}</td>
+                  <td>{positionsList[1]}</td>
+                </tr>
+                <tr>
+                  <td>{pool.name3}</td>
+                  <td>{pool.score3}</td>
+                  <td>{positionsList[2]}</td>
+                </tr>
+                <tr>
+                  <td>{pool.name4}</td>
+                  <td>{pool.score4}</td>
+                  <td>{positionsList[3]}</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </Link>
       )}
       {localeEditBtnToggled && (
-        <div className="d-flex flex-column align-items-center">
-          <form onSubmit={submit}>
+        <form onSubmit={submit}>
+          <div className="d-flex flex-column align-items-center">
             <div className={`${style.card}`}>
-              <div className={`${style.card_teams}`}>
-                <p>
-                  <select id="team_1_id" {...register("team_1_id")}>
-                    {teamsList &&
-                      teamsList.map((e) => (
-                        <option value={e.id} key={e.id}>
-                          {e.name}
+              <table className={`${style.scoreTable}`}>
+                <thead>
+                  <tr>
+                    <th>Teams</th>
+                    <th>Scores</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <select id="team_1_id" {...register("team_1_id")}>
+                        <option value="0" disabled>
+                          Choose nation
                         </option>
-                      ))}
-                  </select>
-                </p>
-                <p>
-                  <select id="team_2_id" {...register("team_2_id")}>
-                    {teamsList &&
-                      teamsList.map((e) => (
-                        <option value={e.id} key={e.id}>
-                          {e.name}
+                        {teamsList &&
+                          teamsList.map((e) => (
+                            <option value={e.id} key={e.id}>
+                              {e.name}
+                            </option>
+                          ))}
+                      </select>
+                      {errors.team_1_id && (
+                        <p className="form-error">{errors.team_1_id.message}</p>
+                      )}
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        min={0}
+                        name="score1"
+                        {...register("score1")}
+                      ></input>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <select id="team_2_id" {...register("team_2_id")}>
+                        <option value="0" disabled>
+                          Choose nation
                         </option>
-                      ))}
-                  </select>
-                </p>
-                <p>
-                  <select id="team_3_id" {...register("team_3_id")}>
-                    {teamsList &&
-                      teamsList.map((e) => (
-                        <option value={e.id} key={e.id}>
-                          {e.name}
+                        {teamsList &&
+                          teamsList.map((e) => (
+                            <option value={e.id} key={e.id}>
+                              {e.name}
+                            </option>
+                          ))}
+                      </select>
+                      {errors.team_2_id && (
+                        <p className="form-error">{errors.team_2_id.message}</p>
+                      )}
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        min={0}
+                        name="score2"
+                        {...register("score2")}
+                      ></input>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <select id="team_3_id" {...register("team_3_id")}>
+                        <option value="0" disabled>
+                          Choose nation
                         </option>
-                      ))}
-                  </select>
-                </p>
-                <p>
-                  <select id="team_4_id" {...register("team_4_id")}>
-                    {teamsList &&
-                      teamsList.map((e) => (
-                        <option value={e.id} key={e.id}>
-                          {e.name}
+                        {teamsList &&
+                          teamsList.map((e) => (
+                            <option value={e.id} key={e.id}>
+                              {e.name}
+                            </option>
+                          ))}
+                      </select>
+                      {errors.team_3_id && (
+                        <p className="form-error">{errors.team_3_id.message}</p>
+                      )}
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        min={0}
+                        name="score3"
+                        {...register("score3")}
+                      ></input>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <select id="team_4_id" {...register("team_4_id")}>
+                        <option value="0" disabled>
+                          Choose nation
                         </option>
-                      ))}
-                  </select>
-                </p>
-              </div>
-              <div className={`${style.card_scores}`}>
-                <p>
-                  <input
-                    type="number"
-                    name="score1"
-                    {...register("score1")}
-                  ></input>
-                </p>
-                <p>
-                  <input
-                    type="number"
-                    name="score2"
-                    {...register("score2")}
-                  ></input>
-                </p>
-                <p>
-                  <input
-                    type="number"
-                    name="score3"
-                    {...register("score3")}
-                  ></input>
-                </p>
-                <p>
-                  <input
-                    type="number"
-                    name="score4"
-                    {...register("score4")}
-                  ></input>
-                </p>
-              </div>
+                        {teamsList &&
+                          teamsList.map((e) => (
+                            <option value={e.id} key={e.id}>
+                              {e.name}
+                            </option>
+                          ))}
+                      </select>
+                      {errors.team_4_id && (
+                        <p className="form-error">{errors.team_4_id.message}</p>
+                      )}
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        min={0}
+                        name="score4"
+                        {...register("score4")}
+                      ></input>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
             <div className="d-flex flex-row align-items-center">
               <button disabled={isSubmitting} className={`${style.icon}`}>
@@ -214,8 +304,8 @@ function PoolCard({ pool, mainEditBtnToggled, newPool = false }) {
                 <img src={close_icon} alt="cancel" />
               </button>
             </div>
-          </form>
-        </div>
+          </div>
+        </form>
       )}
       {!newPool && mainEditBtnToggled && !localeEditBtnToggled && (
         <div className="d-flex flex-row align-items-center">
@@ -235,90 +325,5 @@ function PoolCard({ pool, mainEditBtnToggled, newPool = false }) {
       )}
     </div>
   );
-
-  /*/
-    <div className="d-flex flex-column align-items-center">
-      {plus && (
-        <div className={`${style.card}`} onClick={handleStateClick}>
-          <img src={plus_icon} alt="plus" />
-        </div>
-      )}
-      {pool && idle ? (
-        <Link to={`/login`}>
-          <div className={`${style.card}`}>
-            <div className={`${style.card_teams}`}>
-              <p>{pool.name1}</p>
-              <p>{pool.name2}</p>
-              <p>{pool.name3}</p>
-              <p>{pool.name4}</p>
-            </div>
-            <div className={`${style.card_scores}`}>
-              <p>{pool.score1}</p>
-              <p>{pool.score2}</p>
-              <p>{pool.score3}</p>
-              <p>{pool.score4}</p>
-            </div>
-          </div>
-        </Link>
-      ) : (
-        <div className="d-flex flex-column align-items-center">
-          <div className={`${style.card}`}>
-            <div className={`${style.card_teams}`}>
-              <form onSubmit={submit}>
-                <p>
-                  <select id="team_1_id" {...register("team_1_id")}>
-                    {teamsList &&
-                      teamsList.map((e) => (
-                        <option value={e.id} key={e.id}>
-                          {e.name}
-                        </option>
-                      ))}
-                  </select>
-                </p>
-                <p>
-                  <select id="team_2_id" {...register("team_2_id")}>
-                    {teamsList &&
-                      teamsList.map((e) => (
-                        <option value={e.id} key={e.id}>
-                          {e.name}
-                        </option>
-                      ))}
-                  </select>
-                </p>
-                <p>
-                  <select id="team_3_id" {...register("team_3_id")}>
-                    {teamsList &&
-                      teamsList.map((e) => (
-                        <option value={e.id} key={e.id}>
-                          {e.name}
-                        </option>
-                      ))}
-                  </select>
-                </p>
-                <p>
-                  <select id="team_4_id" {...register("team_4_id")}>
-                    {teamsList &&
-                      teamsList.map((e) => (
-                        <option value={e.id} key={e.id}>
-                          {e.name}
-                        </option>
-                      ))}
-                  </select>
-                </p>
-                <button disabled={isSubmitting} className={`${style.icon}`}>
-                  <img src={plus_icon} alt="add" />
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
-      {edit && idle && (
-        <button onClick={handleStateClick} className={`${style.icon}`}>
-          <img src={edit_icon} alt="add" />
-        </button>
-      )}
-    </div>
-      */
 }
 export default PoolCard;

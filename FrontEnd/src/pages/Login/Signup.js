@@ -72,7 +72,9 @@ export default function Signup({ handleClick, loginActive }) {
           placeholder="Username"
           {...register("username")}
         />
-        {errors.name && <p className="form-error">{errors.username.message}</p>}
+        {errors.username && (
+          <p className="form-error">{errors.username.message}</p>
+        )}
 
         <input
           type="email"

@@ -3,9 +3,14 @@ const API_POOLS = "/api/teams";
 export async function fetchTeamsList() {
   try {
     const response = await fetch(`${API_POOLS}/fetchTeamsList`);
-    const backResponse = await response.json();
-    return backResponse;
+    if (response.ok) {
+      return response.json();
+    } else {
+      window.alert(`Frontend error in fetchTeamsList: ${response.statusText}`);
+      return null;
+    }
   } catch (error) {
-    throw error;
+    window.alert(`Frontend error catched in fetchTeamsList: ${error}`);
+    return null;
   }
 }

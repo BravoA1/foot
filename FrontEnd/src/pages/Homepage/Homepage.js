@@ -5,6 +5,7 @@ import { fetchPoolsList } from "../../apis/pools";
 import { AuthContext } from "../../context/AuthContext";
 import edit_icon from "../../assets/images/icon-edit.svg";
 import close_icon from "../../assets/images/icon-close.svg";
+import { insertPool, updatePool, deletePool } from "../../apis/pools";
 
 /*
  * A pool card has 3 states:
@@ -20,7 +21,7 @@ import close_icon from "../../assets/images/icon-close.svg";
 function Homepage() {
   const { user } = useContext(AuthContext);
   const superuser = user ? !!user.superuser : false;
-  const [poolsList, setPoolsList] = useState(null);
+  const [poolsList, setPoolsList] = useState([]);
   //const [edit, setEdit] = useState(false);
   const [mainEditBtnToggled, setMainEditBtnToggled] = useState(false);
   //const [state, setState] = useState(0);
@@ -28,13 +29,46 @@ function Homepage() {
     setMainEditBtnToggled(!mainEditBtnToggled);
   }
   useEffect(() => {
-    fetchPoolsList().then((response) => {
-      if (response.length > 0) {
-        setPoolsList(response);
+    //fetchPoolsList() .then((response) => { if (response.length > 0) { setPoolsList(response); } }) .catch((error) => window.alert("Error fetching pool list:", error));
+    const fetchPoolsListApp = async () => {
+      try {
+        const fetchedPoolsList = await fetchPoolsList();
+        setPoolsList(fetchedPoolsList);
+      } catch (error) {
+        window.alert("Error fetching pool list:", error);
       }
-      //console.log(response);
-    });
+    };
+    fetchPoolsListApp();
   }, []);
+  async function handleAdd(pool) {
+    const insertedData = await insertPool(pool);
+    //console.log("insertedData:", insertedData);
+    if (insertedData) {
+      setPoolsList([...poolsList, insertedData]);
+      setMainEditBtnToggled(false);
+    }
+  }
+  async function handleDelete(pool) {
+    if (deletePool(pool)) {
+      setPoolsList((previousPoolsList) =>
+        previousPoolsList.filter((poolItem) => poolItem.id !== pool.id)
+      );
+      //setMainEditBtnToggled(false);
+    }
+  }
+  async function handleUpdate(pool) {
+    const updatedData = await updatePool(pool);
+    //console.log("updatedData:", updatedData);
+    if (updatedData) {
+      setPoolsList((previousPoolsList) =>
+        previousPoolsList.map((poolItem) =>
+          poolItem.id === updatedData.id ? updatedData : poolItem
+        )
+      );
+      setMainEditBtnToggled(false);
+    }
+  }
+
   return (
     <>
       {superuser && (
@@ -55,10 +89,19 @@ function Homepage() {
               pool={e}
               key={e.id}
               mainEditBtnToggled={mainEditBtnToggled}
+              handleAdd={handleAdd}
+              handleUpdate={handleUpdate}
+              handleDelete={handleDelete}
             />
           ))}
         {superuser && mainEditBtnToggled && (
-          <PoolCard newPool={true} mainEditBtnToggled={mainEditBtnToggled} />
+          <PoolCard
+            newPool={true}
+            mainEditBtnToggled={mainEditBtnToggled}
+            handleAdd={handleAdd}
+            handleUpdate={handleUpdate}
+            handleDelete={handleDelete}
+          />
         )}
       </div>
     </>
