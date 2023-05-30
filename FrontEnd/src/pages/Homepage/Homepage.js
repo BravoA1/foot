@@ -1,5 +1,6 @@
 import style from "./Homepage.module.scss";
 import PoolCard from "./components/PoolCard";
+import PoolCardEdition from "./components/PoolCardEdition";
 import { useState, useEffect, useContext } from "react";
 import { fetchPoolsList } from "../../apis/pools";
 import { AuthContext } from "../../context/AuthContext";
@@ -35,7 +36,7 @@ function Homepage() {
         const fetchedPoolsList = await fetchPoolsList();
         setPoolsList(fetchedPoolsList);
       } catch (error) {
-        window.alert("Error fetching pool list:", error);
+        window.alert(`Error fetching pool list: ${error}`);
       }
     };
     fetchPoolsListApp();
@@ -68,6 +69,13 @@ function Homepage() {
       setMainEditBtnToggled(false);
     }
   }
+  function handleEdit(pool) {
+    setPoolsList((previousPoolsList) =>
+      previousPoolsList.map((poolItem) =>
+        poolItem.id === pool.id ? pool : poolItem
+      )
+    );
+  }
 
   return (
     <>
@@ -84,18 +92,29 @@ function Homepage() {
         className={`${style.container} d-flex flex-fill flex-wrap align-items-center justify-content-center`}
       >
         {poolsList &&
-          poolsList.map((e) => (
-            <PoolCard
-              pool={e}
-              key={e.id}
-              mainEditBtnToggled={mainEditBtnToggled}
-              handleAdd={handleAdd}
-              handleUpdate={handleUpdate}
-              handleDelete={handleDelete}
-            />
-          ))}
+          poolsList.map((e) => {
+            return e.onEdit ? (
+              <PoolCardEdition
+                pool={e}
+                key={e.id}
+                mainEditBtnToggled={mainEditBtnToggled}
+                handleAdd={handleAdd}
+                handleUpdate={handleUpdate}
+                handleDelete={handleDelete}
+                handleEdit={handleEdit}
+              />
+            ) : (
+              <PoolCard
+                pool={e}
+                key={e.id}
+                mainEditBtnToggled={mainEditBtnToggled}
+                handleDelete={handleDelete}
+                handleEdit={handleEdit}
+              />
+            );
+          })}
         {superuser && mainEditBtnToggled && (
-          <PoolCard
+          <PoolCardEdition
             newPool={true}
             mainEditBtnToggled={mainEditBtnToggled}
             handleAdd={handleAdd}
