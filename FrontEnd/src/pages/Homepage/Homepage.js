@@ -26,9 +26,6 @@ function Homepage() {
   //const [edit, setEdit] = useState(false);
   const [mainEditBtnToggled, setMainEditBtnToggled] = useState(false);
   //const [state, setState] = useState(0);
-  function handleEditClick() {
-    setMainEditBtnToggled(!mainEditBtnToggled);
-  }
   useEffect(() => {
     //fetchPoolsList() .then((response) => { if (response.length > 0) { setPoolsList(response); } }) .catch((error) => window.alert("Error fetching pool list:", error));
     const fetchPoolsListApp = async () => {
@@ -76,11 +73,18 @@ function Homepage() {
       )
     );
   }
+  function handleMainEditBtnToggle() {
+    setMainEditBtnToggled(!mainEditBtnToggled);
+  }
 
   return (
     <>
       {superuser && (
-        <div className={`${style.floating}`} onClick={handleEditClick}>
+        <div
+          //className={`${style.floating} ${style.btnRound}`}
+          className={`${style.floating} btnRound`}
+          onClick={handleMainEditBtnToggle}
+        >
           {mainEditBtnToggled ? (
             <img src={close_icon} alt="Close" />
           ) : (
@@ -93,25 +97,35 @@ function Homepage() {
       >
         {poolsList &&
           poolsList.map((e) => {
-            return e.onEdit ? (
-              <PoolCardEdition
-                pool={e}
-                key={e.id}
-                mainEditBtnToggled={mainEditBtnToggled}
-                handleAdd={handleAdd}
-                handleUpdate={handleUpdate}
-                handleDelete={handleDelete}
-                handleEdit={handleEdit}
-              />
-            ) : (
-              <PoolCard
-                pool={e}
-                key={e.id}
-                mainEditBtnToggled={mainEditBtnToggled}
-                handleDelete={handleDelete}
-                handleEdit={handleEdit}
-              />
-            );
+            switch (e.onEdit) {
+              case undefined:
+              case 0:
+                return (
+                  <PoolCard
+                    pool={e}
+                    key={e.id}
+                    mainEditBtnToggled={mainEditBtnToggled}
+                    handleDelete={handleDelete}
+                    handleEdit={handleEdit}
+                  />
+                );
+              case 1:
+                return (
+                  <PoolCardEdition
+                    pool={e}
+                    key={e.id}
+                    mainEditBtnToggled={mainEditBtnToggled}
+                    handleAdd={handleAdd}
+                    handleUpdate={handleUpdate}
+                    handleDelete={handleDelete}
+                    handleEdit={handleEdit}
+                  />
+                );
+              case 2:
+                return <p> beting </p>;
+              default:
+                return null;
+            }
           })}
         {superuser && mainEditBtnToggled && (
           <PoolCardEdition

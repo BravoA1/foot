@@ -1,5 +1,4 @@
 import style from "./Card.module.scss";
-import { Link } from "react-router-dom";
 import edit_icon from "../../../assets/images/icon-edit.svg";
 import delete_icon from "../../../assets/images/icon-delete.svg";
 import { useState, useEffect } from "react";
@@ -42,7 +41,11 @@ function PoolCard({
 
   function handleLocaleEditBtnToggle() {
     //setLocaleEditBtnToggled(!localeEditBtnToggled);
-    pool.onEdit = true;
+    pool.onEdit = 1;
+    handleEdit(pool);
+  }
+  function handleLocaleBetEditToggle() {
+    pool.onEdit = 2;
     handleEdit(pool);
   }
   function handleLocaleDeleteBtnToggle() {
@@ -50,54 +53,49 @@ function PoolCard({
   }
   return (
     <div className="d-flex flex-column align-items-center">
-      <Link to={`/login`}>
-        <div className={`${style.card}`}>
-          <table className={`${style.scoreTable}`}>
-            <thead>
-              <tr>
-                <th>Teams</th>
-                <th>Scores</th>
-                <th>Position</th>
-                <th>Bet</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>{pool.name1}</td>
-                <td>{pool.score1}</td>
-                <td>{positionsList[0]}</td>
-              </tr>
-              <tr>
-                <td>{pool.name2}</td>
-                <td>{pool.score2}</td>
-                <td>{positionsList[1]}</td>
-              </tr>
-              <tr>
-                <td>{pool.name3}</td>
-                <td>{pool.score3}</td>
-                <td>{positionsList[2]}</td>
-              </tr>
-              <tr>
-                <td>{pool.name4}</td>
-                <td>{pool.score4}</td>
-                <td>{positionsList[3]}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </Link>
+      <div
+        className={`${style.card} c-pointer`}
+        onClick={handleLocaleBetEditToggle}
+      >
+        <table className={`${style.scoreTable}`}>
+          <thead>
+            <tr>
+              <th>Teams</th>
+              <th>Scores</th>
+              <th>Positions</th>
+              <th>Bets</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{pool.name1}</td>
+              <td>{pool.score1}</td>
+              <td>{positionsList[0]}</td>
+            </tr>
+            <tr>
+              <td>{pool.name2}</td>
+              <td>{pool.score2}</td>
+              <td>{positionsList[1]}</td>
+            </tr>
+            <tr>
+              <td>{pool.name3}</td>
+              <td>{pool.score3}</td>
+              <td>{positionsList[2]}</td>
+            </tr>
+            <tr>
+              <td>{pool.name4}</td>
+              <td>{pool.score4}</td>
+              <td>{positionsList[3]}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       {mainEditBtnToggled && (
         <div className="d-flex flex-row align-items-center">
-          <button
-            onClick={handleLocaleEditBtnToggle}
-            className={`${style.icon}`}
-          >
+          <button onClick={handleLocaleEditBtnToggle} className="btnRound">
             <img src={edit_icon} alt="add" />
           </button>
-          <button
-            onClick={handleLocaleDeleteBtnToggle}
-            className={`${style.icon}`}
-          >
+          <button onClick={handleLocaleDeleteBtnToggle} className="btnRound">
             <img src={delete_icon} alt="delete" />
           </button>
         </div>

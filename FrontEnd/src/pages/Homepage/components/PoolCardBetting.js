@@ -25,28 +25,14 @@ function PoolCardEdition({
   handleUpdate,
   handleEdit,
 }) {
-  const [teamsList, setTeamsList] = useState([]);
   const [newPoolIdle, setNewPoolIdle] = useState(newPool);
   const [team1Id, setTeam1Id] = useState(pool?.team_1_id);
   const [team2Id, setTeam2Id] = useState(pool?.team_2_id);
   const [team3Id, setTeam3Id] = useState(pool?.team_3_id);
   const [team4Id, setTeam4Id] = useState(pool?.team_4_id);
 
-  useEffect(() => {
-    const fetchAndSetTeamsList = async () => {
-      try {
-        const data = await fetchTeamsList();
-        //const data = await response.json();
-        if (data.length > 0) setTeamsList(data);
-      } catch (error) {
-        console.log("Error fetchAndSetTeamList:", error);
-      }
-    };
-    fetchAndSetTeamsList();
-    console.log("PoolCardEdition pool:", pool);
-    //   setPositionsList(pool ? getTeamPositions(pool) : []);
-    // }, [pool]);
-  }, []);
+  useEffect(() => {}, []);
+
   function handleLocaleEditBtnToggle() {
     setNewPoolIdle(false);
     //setLocaleEditBtnToggled(!localeEditBtnToggled);
@@ -58,24 +44,6 @@ function PoolCardEdition({
     } else {
       pool.onEdit = false;
       handleEdit(pool);
-    }
-  }
-  function handleSelectChange(event, select) {
-    switch (select) {
-      case 1:
-        setTeam1Id(event.target.value);
-        break;
-      case 2:
-        setTeam2Id(event.target.value);
-        break;
-      case 3:
-        setTeam3Id(event.target.value);
-        break;
-      case 4:
-        setTeam4Id(event.target.value);
-        break;
-      default:
-        break;
     }
   }
   const validationSchema = yup.object({
@@ -298,6 +266,22 @@ function PoolCardEdition({
           </div>
         </form>
       )}
+      {/* {!newPool && mainEditBtnToggled && !localeEditBtnToggled && (
+        <div className="d-flex flex-row align-items-center">
+          <button
+            onClick={handleLocaleEditBtnToggle}
+            className={`${style.icon}`}
+          >
+            <img src={edit_icon} alt="add" />
+          </button>
+          <button
+            onClick={handleLocaleDeleteBtnToggle}
+            className={`${style.icon}`}
+          >
+            <img src={delete_icon} alt="delete" />
+          </button>
+        </div>
+      )} */}
     </div>
   );
 }

@@ -17,7 +17,7 @@ export default function Login() {
         <Navigate to="/" />
       ) : (
         <div
-          className={` d-flex align-items-center justify-content-center flex-fill ${styles.mainContain}`}
+          className={`d-flex align-items-center justify-content-center flex-fill ${styles.mainContain}`}
         >
           <div className={`${styles.main}`}>
             <Signup handleClick={handleClick} loginActive={loginActive} />
