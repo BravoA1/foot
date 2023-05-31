@@ -21,7 +21,7 @@ router.post("/", async (req, res) => {
             algorithm: "RS256",
             //SameSite: None,
           });
-          res.cookie("token", token);
+          res.cookie("token", token, { httpOnly: true, sameSite: "none" });
           res.send(user);
         } else {
           res
@@ -51,11 +51,7 @@ router.get("/fetchCurrentUser", async (req, res) => {
       const sqlVerify = "SELECT * FROM user WHERE id=?";
       connection.query(sqlVerify, decodedToken.sub, (err, result) => {
         const currentUser = result[0];
-        if (currentUser) {
-          return res.send(currentUser);
-        } else {
-          res.send(JSON.stringify(null));
-        }
+        res.send(currentUser ? currentUser : JSON.stringify(null));
       });
     } catch (error) {
       res.send(JSON.stringify(null));

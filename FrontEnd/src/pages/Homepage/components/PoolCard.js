@@ -71,21 +71,25 @@ function PoolCard({
               <td>{pool.name1}</td>
               <td>{pool.score1}</td>
               <td>{positionsList[0]}</td>
+              <td>{pool.bet1}</td>
             </tr>
             <tr>
               <td>{pool.name2}</td>
               <td>{pool.score2}</td>
               <td>{positionsList[1]}</td>
+              <td>{pool.bet2}</td>
             </tr>
             <tr>
               <td>{pool.name3}</td>
               <td>{pool.score3}</td>
               <td>{positionsList[2]}</td>
+              <td>{pool.bet3}</td>
             </tr>
             <tr>
               <td>{pool.name4}</td>
               <td>{pool.score4}</td>
               <td>{positionsList[3]}</td>
+              <td>{pool.bet4}</td>
             </tr>
           </tbody>
         </table>

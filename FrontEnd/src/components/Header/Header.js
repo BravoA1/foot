@@ -39,19 +39,19 @@ export default function Header() {
             <>
               <Link to="/profile">
                 <div className={`${styles.button}`}>
-                  <span>Profil</span>
+                  <span>Profile</span>
                 </div>
               </Link>
               <Link to="/" onClick={() => signout()}>
                 <div className={`${styles.button}`}>
-                  <span>Déconnexion</span>
+                  <span>Sign out</span>
                 </div>
               </Link>
             </>
           ) : (
             <Link to="/login">
               <div className={`${styles.button}`}>
-                <span>Connexion</span>
+                <span>Sign in</span>
               </div>
             </Link>
           )}

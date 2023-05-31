@@ -12,7 +12,7 @@ export async function signin(credentials) {
     if (response.ok) {
       return response.json();
     } else {
-      window.alert(`Frontend error in signin: ${response.statusText}`);
+      //window.alert(`Frontend error in signin: ${response.statusText}`);
       return null;
     }
   } catch (error) {

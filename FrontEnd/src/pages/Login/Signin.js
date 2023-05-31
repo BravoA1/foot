@@ -52,19 +52,19 @@ export default function Signin({ handleClick, loginActive }) {
     >
       <form onSubmit={submit}>
         <label className="labelLogin" onClick={handleClick}>
-          Connexion
+          Sign in
         </label>
         <input
           type="email"
           name="email"
-          placeholder="Email"
+          placeholder="E-mail"
           {...register("email")}
         />
         {errors.email && <p className="form-error">{errors.email.message}</p>}
         <input
           type="password"
           name="password"
-          placeholder="Mot de passe"
+          placeholder="Password"
           {...register("password")}
         />
         {errors.password && (
@@ -74,7 +74,7 @@ export default function Signin({ handleClick, loginActive }) {
           <p className="form-error">{errors.generic.message}</p>
         )}
         <button disabled={isSubmitting} className="btnLogin">
-          Connexion
+          Sign in
         </button>
       </form>
     </div>

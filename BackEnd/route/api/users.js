@@ -4,7 +4,7 @@ const connection = require("../../database/index");
 
 router.post("/", async (req, res) => {
   const email = req.body.email;
-  const username = req.body.name;
+  const username = req.body.username;
   const password = req.body.password;
   const passwordCrypt = await bcrypt.hash(password, 8);
   const values = [username, passwordCrypt, email];

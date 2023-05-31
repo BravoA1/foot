@@ -43,7 +43,6 @@ function PoolCardEdition({
       }
     };
     fetchAndSetTeamsList();
-    console.log("PoolCardEdition pool:", pool);
     //   setPositionsList(pool ? getTeamPositions(pool) : []);
     // }, [pool]);
   }, []);
@@ -56,7 +55,7 @@ function PoolCardEdition({
     if (newPool) {
       setNewPoolIdle(true);
     } else {
-      pool.onEdit = false;
+      pool.onEdit = 0;
       handleEdit(pool);
     }
   }
@@ -168,11 +167,12 @@ function PoolCardEdition({
                         <option value="" disabled>
                           Choose nation
                         </option>
-                        {teamsList.map((e) => (
-                          <option value={e.id} key={e.id}>
-                            {e.name}
-                          </option>
-                        ))}
+                        {teamsList &&
+                          teamsList.map((e) => (
+                            <option value={e.id} key={e.id}>
+                              {e.name}
+                            </option>
+                          ))}
                       </select>
                       {errors.team_1_id && (
                         <p className="form-error">{errors.team_1_id.message}</p>

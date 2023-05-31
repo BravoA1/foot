@@ -1,8 +1,16 @@
 const API_POOLS = "/api/pools";
 
-export async function fetchPoolsList() {
+export async function fetchPoolsList(tournamentId) {
   try {
-    const response = await fetch(`${API_POOLS}/fetchPoolsList`);
+    const response = await fetch(
+      `${API_POOLS}/fetchPoolsList/${tournamentId}`,
+      {
+        method: "GET",
+        //headers: { "Content-Type": "application/json" },
+        //body: JSON.stringify(tournamentId),
+        //body: tournamentId
+      }
+    );
     if (response.ok) {
       return response.json();
     } else {

@@ -47,7 +47,7 @@ export default function Signup({ handleClick, loginActive }) {
   });
 
   const submit = handleSubmit(async (values) => {
-    console.log(values);
+    //console.log(values);
     try {
       clearErrors();
       await createUser(values);
@@ -79,7 +79,7 @@ export default function Signup({ handleClick, loginActive }) {
         <input
           type="email"
           name="email"
-          placeholder="Email"
+          placeholder="E-mail"
           {...register("email")}
         />
         {errors.email && <p className="form-error">{errors.email.message}</p>}
@@ -87,7 +87,7 @@ export default function Signup({ handleClick, loginActive }) {
         <input
           type="password"
           name="password"
-          placeholder="Mot de passe"
+          placeholder="Password"
           {...register("password")}
         />
         {errors.password && (
@@ -97,7 +97,7 @@ export default function Signup({ handleClick, loginActive }) {
         <input
           type="password"
           name="confirm_password"
-          placeholder="Confirmer votre mot de passe"
+          placeholder="Confirm password"
           {...register("confirm_password")}
         />
         {errors.confirm_password && (
@@ -107,7 +107,7 @@ export default function Signup({ handleClick, loginActive }) {
           <p className="form-error">{errors.generic.message}</p>
         )}
         <button disabled={isSubmitting} className="btnLogin btnSingUp">
-          Inscription
+          Sign up
         </button>
       </form>
     </div>

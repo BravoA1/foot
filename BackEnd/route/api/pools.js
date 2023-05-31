@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const connection = require("../../database/index");
 
-router.get("/fetchPoolsList", async (req, res) => {
+router.get("/fetchPoolsList/:tournamentId", async (req, res) => {
   const sql = `SELECT pool.id, pool.team_1_id, pool.team_2_id, pool.team_3_id, 
   pool.team_4_id, team1.name AS name1, team2.name AS name2, 
   team3.name AS name3, team4.name AS name4, pool.score1, pool.score2, 
@@ -12,7 +12,8 @@ router.get("/fetchPoolsList", async (req, res) => {
   LEFT JOIN team AS team3 ON pool.team_3_id=team3.id 
   LEFT JOIN team AS team4 ON pool.team_4_id=team4.id 
   WHERE pool.tournament_id=?`;
-  const tournament_id = 1;
+  const tournament_id = req.params.tournamentId;
+  //console.log("tournament id:", tournament_id);
   connection.query(sql, tournament_id, (error, result) => {
     if (error) {
       console.error("Error executing MySQL query:", error);
@@ -35,7 +36,7 @@ router.post("/insertPool", async (req, res) => {
   const score2 = req.body.score2;
   const score3 = req.body.score3;
   const score4 = req.body.score4;
-  const tournament_id = 1;
+  const tournament_id = req.body.tournament_id;
   const values = [
     team_1_id,
     team_2_id,
@@ -84,7 +85,7 @@ router.post("/updatePool", async (req, res) => {
   const team_2_id = req.body.team_2_id;
   const team_3_id = req.body.team_3_id;
   const team_4_id = req.body.team_4_id;
-  const tournament_id = 1;
+  const tournament_id = req.body.tournament_id;
   const pool_id = req.body.id;
   const score1 = req.body.score1;
   const score2 = req.body.score2;

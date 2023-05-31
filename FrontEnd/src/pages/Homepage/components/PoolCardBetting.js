@@ -1,8 +1,6 @@
 import style from "./Card.module.scss";
 import plus_icon from "../../../assets/images/icon-plus.svg";
 import close_icon from "../../../assets/images/icon-close.svg";
-import { useState, useEffect } from "react";
-import { fetchTeamsList } from "../../../apis/teams";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -18,270 +16,127 @@ import { yupResolver } from "@hookform/resolvers/yup";
  *                 - case edit pool: edition is enabled + icon register + icon cancel
  */
 
-function PoolCardEdition({
-  pool,
-  newPool = false,
-  handleAdd,
-  handleUpdate,
-  handleEdit,
-}) {
-  const [newPoolIdle, setNewPoolIdle] = useState(newPool);
-  const [team1Id, setTeam1Id] = useState(pool?.team_1_id);
-  const [team2Id, setTeam2Id] = useState(pool?.team_2_id);
-  const [team3Id, setTeam3Id] = useState(pool?.team_3_id);
-  const [team4Id, setTeam4Id] = useState(pool?.team_4_id);
-
-  useEffect(() => {}, []);
-
-  function handleLocaleEditBtnToggle() {
-    setNewPoolIdle(false);
-    //setLocaleEditBtnToggled(!localeEditBtnToggled);
-  }
+function PoolCardEdition({ pool, handleBetAdd, handleBetUpdate, handleEdit }) {
   function handleLocaleCancelBtnToggle() {
-    //setLocaleEditBtnToggled(false);
-    if (newPool) {
-      setNewPoolIdle(true);
-    } else {
-      pool.onEdit = false;
-      handleEdit(pool);
-    }
+    pool.onEdit = 0;
+    handleEdit(pool);
   }
   const validationSchema = yup.object({
-    team_1_id: yup
-      .number()
-      .typeError("select all nations")
-      .notOneOf(
-        [yup.ref("team_2_id"), yup.ref("team_3_id"), yup.ref("team_4_id")],
-        "already picked"
-      ),
-    team_2_id: yup
-      .number()
-      .typeError("select all nations")
-      .notOneOf(
-        [yup.ref("team_1_id"), yup.ref("team_3_id"), yup.ref("team_4_id")],
-        "already picked"
-      ),
-    team_3_id: yup
-      .number()
-      .typeError("select all nations")
-      .notOneOf(
-        [yup.ref("team_2_id"), yup.ref("team_1_id"), yup.ref("team_4_id")],
-        "already picked"
-      ),
-    team_4_id: yup
-      .number()
-      .typeError("select all nations")
-      .notOneOf(
-        [yup.ref("team_2_id"), yup.ref("team_3_id"), yup.ref("team_1_id")],
-        "already picked"
-      ),
+    bet1: yup.number().min(1).max(4),
+    bet2: yup.number().min(1).max(4),
+    bet3: yup.number().min(1).max(4),
+    bet4: yup.number().min(1).max(4),
   });
+  const defaultValues = {
+    bet1: pool?.bet1,
+    bet2: pool?.bet2,
+    bet3: pool?.bet3,
+    bet4: pool?.bet4,
+  };
   const {
     handleSubmit,
     register,
-    formState: { errors, isSubmitting },
-    //formState: { isSubmitting },
+    //formState: { errors, isSubmitting },
+    formState: { isSubmitting },
     //setError,
     clearErrors,
   } = useForm({
     resolver: yupResolver(validationSchema),
-    defaultValues: {
-      team_1_id: pool ? pool.team_1_id : "",
-      team_2_id: pool ? pool.team_2_id : "",
-      team_3_id: pool ? pool.team_3_id : "",
-      team_4_id: pool ? pool.team_4_id : "",
-      score1: pool ? pool.score1 : 0,
-      score2: pool ? pool.score2 : 0,
-      score3: pool ? pool.score3 : 0,
-      score4: pool ? pool.score4 : 0,
-    },
+    defaultValues: defaultValues,
   });
   const submit = handleSubmit((values) => {
     clearErrors();
-    if (newPool) {
-      handleAdd(values);
-      //setLocaleEditBtnToggled(false);
+    values.pool_id = pool.id;
+    if (
+      defaultValues.bet1 &&
+      defaultValues.bet2 &&
+      defaultValues.bet3 &&
+      defaultValues.bet4
+    ) {
+      handleBetUpdate(values);
     } else {
-      values.id = pool.id;
-      handleUpdate(values);
-      //setLocaleEditBtnToggled(false);
+      handleBetAdd(values);
     }
+    //setLocaleEditBtnToggled(false);
   });
   return (
     <div className="d-flex flex-column align-items-center">
-      {newPoolIdle ? (
-        <div className={`${style.card}`} onClick={handleLocaleEditBtnToggle}>
-          <img src={plus_icon} alt="plus" />
-        </div>
-      ) : (
-        <form onSubmit={submit}>
-          <div className="d-flex flex-column align-items-center">
-            <div className={`${style.card}`}>
-              <table className={`${style.scoreTable}`}>
-                <thead>
-                  <tr>
-                    <th>Teams</th>
-                    <th>Scores</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      <select
-                        id="team_1_id"
-                        {...register("team_1_id")}
-                        value={team1Id}
-                        onChange={(e) => handleSelectChange(e, 1)}
-                      >
-                        <option value="" disabled>
-                          Choose nation
-                        </option>
-                        {teamsList.map((e) => (
-                          <option value={e.id} key={e.id}>
-                            {e.name}
-                          </option>
-                        ))}
-                      </select>
-                      {errors.team_1_id && (
-                        <p className="form-error">{errors.team_1_id.message}</p>
-                      )}
-                    </td>
-                    <td>
-                      <input
-                        type="number"
-                        min={0}
-                        name="score1"
-                        {...register("score1")}
-                      ></input>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <select
-                        id="team_2_id"
-                        {...register("team_2_id")}
-                        value={team2Id}
-                        onChange={(e) => handleSelectChange(e, 2)}
-                      >
-                        <option value="" disabled>
-                          Choose nation
-                        </option>
-                        {teamsList &&
-                          teamsList.map((e) => (
-                            <option value={e.id} key={e.id}>
-                              {e.name}
-                            </option>
-                          ))}
-                      </select>
-                      {errors.team_2_id && (
-                        <p className="form-error">{errors.team_2_id.message}</p>
-                      )}
-                    </td>
-                    <td>
-                      <input
-                        type="number"
-                        min={0}
-                        name="score2"
-                        {...register("score2")}
-                      ></input>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <select
-                        id="team_3_id"
-                        {...register("team_3_id")}
-                        value={team3Id}
-                        onChange={(e) => handleSelectChange(e, 3)}
-                      >
-                        <option value="" disabled>
-                          Choose nation
-                        </option>
-                        {teamsList &&
-                          teamsList.map((e) => (
-                            <option value={e.id} key={e.id}>
-                              {e.name}
-                            </option>
-                          ))}
-                      </select>
-                      {errors.team_3_id && (
-                        <p className="form-error">{errors.team_3_id.message}</p>
-                      )}
-                    </td>
-                    <td>
-                      <input
-                        type="number"
-                        min={0}
-                        name="score3"
-                        {...register("score3")}
-                      ></input>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <select
-                        id="team_4_id"
-                        {...register("team_4_id")}
-                        value={team4Id}
-                        onChange={(e) => handleSelectChange(e, 4)}
-                      >
-                        <option value="" disabled>
-                          Choose nation
-                        </option>
-                        {teamsList &&
-                          teamsList.map((e) => (
-                            <option value={e.id} key={e.id}>
-                              {e.name}
-                            </option>
-                          ))}
-                      </select>
-                      {errors.team_4_id && (
-                        <p className="form-error">{errors.team_4_id.message}</p>
-                      )}
-                    </td>
-                    <td>
-                      <input
-                        type="number"
-                        min={0}
-                        name="score4"
-                        {...register("score4")}
-                      ></input>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div className="d-flex flex-row align-items-center">
-              <button disabled={isSubmitting} className="btnRound">
-                <img src={plus_icon} alt="add" />
-              </button>
-              <button
-                onClick={handleLocaleCancelBtnToggle}
-                className="btnRound"
-                type="button"
-              >
-                <img src={close_icon} alt="cancel" />
-              </button>
-            </div>
+      <form onSubmit={submit}>
+        <div className="d-flex flex-column align-items-center">
+          <div className={`${style.card}`}>
+            <table className={`${style.scoreTable}`}>
+              <thead>
+                <tr>
+                  <th>Teams</th>
+                  <th>Bets</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{pool.name1}</td>
+                  <td>
+                    <input
+                      type="number"
+                      min={1}
+                      max={4}
+                      name="bet1"
+                      {...register("bet1")}
+                    ></input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>{pool.name2}</td>
+                  <td>
+                    <input
+                      type="number"
+                      min={1}
+                      max={4}
+                      name="bet2"
+                      {...register("bet2")}
+                    ></input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>{pool.name3}</td>
+                  <td>
+                    <input
+                      type="number"
+                      min={1}
+                      max={4}
+                      name="bet3"
+                      {...register("bet3")}
+                    ></input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>{pool.name4}</td>
+                  <td>
+                    <input
+                      type="number"
+                      min={1}
+                      max={4}
+                      name="bet4"
+                      {...register("bet4")}
+                    ></input>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
-        </form>
-      )}
-      {/* {!newPool && mainEditBtnToggled && !localeEditBtnToggled && (
-        <div className="d-flex flex-row align-items-center">
-          <button
-            onClick={handleLocaleEditBtnToggle}
-            className={`${style.icon}`}
-          >
-            <img src={edit_icon} alt="add" />
-          </button>
-          <button
-            onClick={handleLocaleDeleteBtnToggle}
-            className={`${style.icon}`}
-          >
-            <img src={delete_icon} alt="delete" />
-          </button>
+          <div className="d-flex flex-row align-items-center">
+            <button disabled={isSubmitting} className="btnRound">
+              <img src={plus_icon} alt="add" />
+            </button>
+            <button
+              onClick={handleLocaleCancelBtnToggle}
+              className="btnRound"
+              type="button"
+            >
+              <img src={close_icon} alt="cancel" />
+            </button>
+          </div>
         </div>
-      )} */}
+      </form>
     </div>
   );
 }

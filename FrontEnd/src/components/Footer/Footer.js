@@ -11,7 +11,7 @@ export default function Footer() {
   return (
     <>
       <div onClick={scrollToTop} className={`${styles.topPage}`}>
-        <p>Retour en haut</p>
+        <p>Return to top</p>
       </div>
       <footer>
         <h2>footer</h2>
