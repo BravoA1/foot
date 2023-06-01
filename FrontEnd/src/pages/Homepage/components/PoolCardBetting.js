@@ -1,6 +1,6 @@
 import style from "./Card.module.scss";
-import plus_icon from "../../../assets/images/icon-plus.svg";
-import close_icon from "../../../assets/images/icon-close.svg";
+import plus_icon from "../../../assets/images/add.svg";
+import close_icon from "../../../assets/images/cancel.svg";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";

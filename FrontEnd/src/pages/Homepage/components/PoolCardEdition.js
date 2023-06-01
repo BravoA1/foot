@@ -1,6 +1,7 @@
 import style from "./Card.module.scss";
 import plus_icon from "../../../assets/images/icon-plus.svg";
-import close_icon from "../../../assets/images/icon-close.svg";
+import add_icon from "../../../assets/images/add.svg";
+import close_icon from "../../../assets/images/cancel.svg";
 import { useState, useEffect } from "react";
 import { fetchTeamsList } from "../../../apis/teams";
 import * as yup from "yup";
@@ -285,7 +286,7 @@ function PoolCardEdition({
             </div>
             <div className="d-flex flex-row align-items-center">
               <button disabled={isSubmitting} className="btnRound">
-                <img src={plus_icon} alt="add" />
+                <img src={add_icon} alt="add" />
               </button>
               <button
                 onClick={handleLocaleCancelBtnToggle}

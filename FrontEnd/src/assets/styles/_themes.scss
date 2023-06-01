@@ -29,11 +29,18 @@
   }
 }
 
+.icon {
+  width: 25px;
+  height: 25px;
+}
+
 .btnRound {
+  margin: 2px;
   width: 70px;
   height: 70px;
   background-color: var(--primary);
   border-radius: 50px;
+  border: none;
   img {
     scale: 70%;
   }

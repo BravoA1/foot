@@ -1,6 +1,6 @@
 import style from "./Card.module.scss";
-import edit_icon from "../../../assets/images/icon-edit.svg";
-import delete_icon from "../../../assets/images/icon-delete.svg";
+import edit_icon from "../../../assets/images/edit.svg";
+import delete_icon from "../../../assets/images/delete.svg";
 import { useState, useEffect } from "react";
 
 /*

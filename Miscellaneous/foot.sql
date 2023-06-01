@@ -96,7 +96,8 @@ INSERT INTO `team` (`id`, `name`) VALUES
 
 CREATE TABLE `tournament` (
   `id` int(11) NOT NULL,
-  `dateYear` int(11) DEFAULT NULL
+  `dateYear` int(11) DEFAULT NULL,
+  `lock` boolean DEFAULT false
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `tournament` (`id`, `dateYear`) VALUES

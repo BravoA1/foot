@@ -2,10 +2,14 @@ import style from "./Homepage.module.scss";
 import PoolCard from "./components/PoolCard";
 import PoolCardEdition from "./components/PoolCardEdition";
 import PoolCardBetting from "./components/PoolCardBetting";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
-import edit_icon from "../../assets/images/icon-edit.svg";
-import close_icon from "../../assets/images/icon-close.svg";
+import edit_icon from "../../assets/images/edit.svg";
+import close_icon from "../../assets/images/cancel.svg";
+import add_icon from "../../assets/images/add.svg";
+import lock_icon from "../../assets/images/lock.svg";
+import unlock_icon from "../../assets/images/unlock.svg";
 import {
   fetchPoolsList,
   insertPool,
@@ -13,7 +17,13 @@ import {
   deletePool,
 } from "../../apis/pools";
 import { fetchBetsList, insertBet, updateBet } from "../../apis/bets";
-import { fetchTournamentsList } from "../../apis/tournaments";
+import {
+  fetchTournamentsList,
+  tournamentIsLocked,
+  updateTournamentLocked,
+  updateTournament,
+  insertTournament,
+} from "../../apis/tournaments";
 
 /*
  * A pool card has 3 states:
@@ -32,16 +42,25 @@ function Homepage() {
   const [poolsList, setPoolsList] = useState([]);
   const [tournamentsList, setTournamentsList] = useState([]);
   const [currentTournamentId, setCurrentTournamentId] = useState(undefined);
+  const [currentTournamentLocked, setCurrentTournamentLocked] =
+    useState(undefined);
   const [mainEditBtnToggled, setMainEditBtnToggled] = useState(false);
+  const [editTournament, setEditTournament] = useState(false);
+  const selectTournamentRef = useRef();
+  const inputTournamentRef = useRef();
+  const navigate = useNavigate();
 
   useEffect(() => {
     (() => {
       fetchTournamentsList()
-        .then((response) => {
-          if (response) {
-            setTournamentsList(response);
-            const lastId = response[response.length - 1].id;
-            setCurrentTournamentId(lastId);
+        .then((fetchedTournamentsList) => {
+          console.log("fetchedTournamentsList:", fetchedTournamentsList);
+          if (fetchedTournamentsList) {
+            setTournamentsList(fetchedTournamentsList);
+            const last =
+              fetchedTournamentsList[fetchedTournamentsList.length - 1];
+            setCurrentTournamentId(last.id);
+            setCurrentTournamentLocked(last.locked);
           }
         })
         .catch((error) =>
@@ -124,7 +143,7 @@ function Homepage() {
   }
 
   async function handleBetAdd(bet) {
-    console.log(bet);
+    //console.log(bet);
     bet.user_id = user.id;
     const insertedBet = await insertBet(bet);
     if (insertedBet) {
@@ -162,7 +181,51 @@ function Homepage() {
     }
   }
 
+  function handleAddUpdateTournament() {
+    switch (editTournament) {
+      case 1:
+        insertTournament({
+          dateYear: inputTournamentRef.current.value,
+        })
+          .then((insertedData) => {
+            if (insertedData)
+              setTournamentsList([...tournamentsList, insertedData]);
+            setMainEditBtnToggled(false);
+          })
+          .catch((error) => window.alert(`error: ${error}`));
+        break;
+      case 2:
+        updateTournament({
+          id: currentTournamentId,
+          dateYear: inputTournamentRef.current.value,
+        })
+          .then((updatedTournament) => {
+            if (updatedTournament) {
+              setTournamentsList((previousTournamentsList) =>
+                previousTournamentsList.map((previousTournament) =>
+                  previousTournament.id === updatedTournament.id
+                    ? updatedTournament
+                    : previousTournament
+                )
+              );
+            }
+            setMainEditBtnToggled(false);
+          })
+          .catch((error) => window.alert(`error: ${error}`));
+        break;
+      default:
+        break;
+    }
+  }
+
   function handleEdit(pool) {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+    if (currentTournamentLocked && pool.onEdit === 2) {
+      return;
+    }
     setPoolsList((previousPoolsList) =>
       previousPoolsList.map((poolItem) =>
         poolItem.id === pool.id ? pool : poolItem
@@ -176,7 +239,24 @@ function Homepage() {
 
   function handleSelectChange(event) {
     setCurrentTournamentId(event.target.value);
+    tournamentIsLocked(event.target.value).then((response) =>
+      setCurrentTournamentLocked(response.locked)
+    );
+    // setCurrentTournamentLock(event.target.value.lock);
+    // setCurrentTournamentId(event.target.value.id);
     //fetchPoolAndBetData(currentTournamentId);
+  }
+
+  function handleTournamentEditBtnToggle() {
+    if (
+      updateTournamentLocked(
+        currentTournamentId,
+        currentTournamentLocked ? 0 : 1
+      )
+    ) {
+      setCurrentTournamentLocked(!currentTournamentLocked);
+      setMainEditBtnToggled(false);
+    }
   }
 
   return (
@@ -197,8 +277,13 @@ function Homepage() {
       <div
         className={`d-flex flex-fill align-items-center justify-content-center`}
       >
-        <label>Tournament:</label>
-        <select value={currentTournamentId} onChange={handleSelectChange}>
+        <label className="mr10">Tournament:</label>
+        <select
+          value={currentTournamentId}
+          onChange={handleSelectChange}
+          className="mr10"
+          ref={selectTournamentRef}
+        >
           {tournamentsList &&
             tournamentsList.map((tournament) => (
               <option key={tournament.id} value={tournament.id}>
@@ -206,6 +291,53 @@ function Homepage() {
               </option>
             ))}
         </select>
+        {!!currentTournamentLocked && !mainEditBtnToggled && (
+          <img src={lock_icon} alt="lock" className="icon" />
+        )}
+        {superuser &&
+          mainEditBtnToggled &&
+          (editTournament ? (
+            <>
+              <input
+                className="mr10"
+                ref={inputTournamentRef}
+                type="number"
+                min={1900}
+                defaultValue={
+                  editTournament === 2 &&
+                  selectTournamentRef.current.options[
+                    selectTournamentRef.current.selectedIndex
+                  ].text
+                }
+              ></input>
+              <button className="btnRound" onClick={handleAddUpdateTournament}>
+                {editTournament === 1 && <img src={add_icon} alt="Add" />}
+                {editTournament === 2 && <img src={edit_icon} alt="Edit" />}
+              </button>
+              <button className="btnRound" onClick={() => setEditTournament(0)}>
+                <img src={close_icon} alt="Cancel" />
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                className="btnRound"
+                onClick={handleTournamentEditBtnToggle}
+              >
+                {!!currentTournamentLocked ? (
+                  <img src={unlock_icon} alt="unlock" />
+                ) : (
+                  <img src={lock_icon} alt="lock" />
+                )}
+              </button>
+              <button className="btnRound" onClick={() => setEditTournament(2)}>
+                <img src={edit_icon} alt="Edit" />
+              </button>
+              <button className="btnRound" onClick={() => setEditTournament(1)}>
+                <img src={add_icon} alt="Add" />
+              </button>
+            </>
+          ))}
       </div>
       <div
         className={`d-flex flex-fill flex-wrap align-items-center justify-content-center`}

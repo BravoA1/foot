@@ -8,11 +8,7 @@ router.get("/fetchTeamsList", async (req, res) => {
       console.error("Error executing MySQL query:", error);
       res.status(500).send("Error executing MySQL query");
     }
-    if (result) {
-      return res.send(result);
-    } else {
-      res.send(JSON.stringify(null));
-    }
+    res.send(result ? result : JSON.stringify(null));
   });
 });
 
