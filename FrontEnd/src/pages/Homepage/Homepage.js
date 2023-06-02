@@ -10,6 +10,7 @@ import close_icon from "../../assets/images/cancel.svg";
 import add_icon from "../../assets/images/add.svg";
 import lock_icon from "../../assets/images/lock.svg";
 import unlock_icon from "../../assets/images/unlock.svg";
+import betclose_icon from "../../assets/images/bet-closed.svg";
 import {
   fetchPoolsList,
   insertPool,
@@ -262,17 +263,25 @@ function Homepage() {
   return (
     <>
       {superuser && (
-        <div
-          //className={`${style.floating} ${style.btnRound}`}
-          className={`${style.floating} btnRound`}
-          onClick={handleMainEditBtnToggle}
-        >
-          {mainEditBtnToggled ? (
-            <img src={close_icon} alt="Close" />
-          ) : (
-            <img src={edit_icon} alt="Edit" />
-          )}
-        </div>
+        <>
+          <div
+            //className={`${style.floating} ${style.btnRound}`}
+            className={`${style.floatingTop} btnRound`}
+            onClick={handleMainEditBtnToggle}
+          >
+            {mainEditBtnToggled ? (
+              <img src={close_icon} alt="Close" />
+            ) : (
+              <img src={edit_icon} alt="Edit" />
+            )}
+          </div>
+          <div
+            className={`${style.floatingBottom} btnRound`}
+            onClick={() => window.alert("This button does nothing yet")}
+          >
+            <img src={betclose_icon} alt="Bet Closed" />
+          </div>
+        </>
       )}
       <div
         className={`d-flex flex-fill align-items-center justify-content-center`}
