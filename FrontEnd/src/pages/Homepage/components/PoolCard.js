@@ -2,6 +2,7 @@ import style from "./Card.module.scss";
 import edit_icon from "../../../assets/images/edit.svg";
 import delete_icon from "../../../assets/images/delete.svg";
 import { useState, useEffect } from "react";
+import { getTeamPositions } from "../../../helper/helper";
 
 /*
  * A pool card has 3 states:
@@ -22,18 +23,6 @@ function PoolCard({
 }) {
   const [positionsList, setPositionsList] = useState([]);
   //const [localeEditBtnToggled, setLocaleEditBtnToggled] = useState(false);
-
-  function getTeamPositions(pool) {
-    const scores = [pool.score1, pool.score2, pool.score3, pool.score4];
-
-    // Sort the scores in descending order
-    const sortedScores = scores.slice().sort((a, b) => b - a);
-
-    // Map the positions based on the sorted scores
-    const positions = scores.map((score) => sortedScores.indexOf(score) + 1);
-
-    return positions;
-  }
 
   useEffect(() => {
     setPositionsList(pool ? getTeamPositions(pool) : []);

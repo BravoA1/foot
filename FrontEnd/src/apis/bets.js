@@ -14,6 +14,21 @@ export async function fetchBetsList(userId) {
   }
 }
 
+export async function fetchBetsListTournament(tournamentId) {
+  try {
+    const response = await fetch(
+      `${API_BETS}/fetchBetsListTournament/${tournamentId}`,
+      {
+        method: "GET",
+      }
+    );
+    return response.ok ? response.json() : null;
+  } catch (error) {
+    window.alert(`Frontend error catched in fetchTeamsList: ${error}`);
+    return null;
+  }
+}
+
 export async function insertBet(bet) {
   try {
     const response = await fetch(`${API_BETS}/insertBet`, {
@@ -27,6 +42,21 @@ export async function insertBet(bet) {
     return response.ok ? response.json() : null;
   } catch (error) {
     window.alert(`Frontend error catched in insertBet: ${error}`);
+    return null;
+  }
+}
+
+export async function updateResultBet(userId, poolId, betResult) {
+  try {
+    const response = await fetch(
+      `${API_BETS}/updateResultBet/${userId}-${poolId}-${betResult}`,
+      {
+        method: `PUT`,
+      }
+    );
+    return response.ok;
+  } catch (error) {
+    window.alert(`Frontend error catched in updateResultBet: ${error}`);
     return null;
   }
 }

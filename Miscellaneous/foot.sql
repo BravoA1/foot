@@ -33,7 +33,8 @@ CREATE TABLE `bet` (
   `position1` int(11) DEFAULT NULL,
   `position2` int(11) DEFAULT NULL,
   `position3` int(11) DEFAULT NULL,
-  `position4` int(11) DEFAULT NULL
+  `position4` int(11) DEFAULT NULL,
+  `resultBet` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------

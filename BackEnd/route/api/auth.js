@@ -21,7 +21,11 @@ router.post("/", async (req, res) => {
             algorithm: "RS256",
             //SameSite: None,
           });
-          res.cookie("token", token, { httpOnly: true, sameSite: "none" });
+          res.cookie("token", token, {
+            httpOnly: true,
+            sameSite: "none",
+            secure: "false",
+          });
           res.send(user);
         } else {
           res
