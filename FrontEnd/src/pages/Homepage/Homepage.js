@@ -20,11 +20,12 @@ import {
 import { fetchBetsList, insertBet, updateBet } from "../../apis/bets";
 import {
   fetchTournamentsList,
-  tournamentIsLocked,
+  // tournamentIsLocked,
   updateTournamentLocked,
   updateTournament,
   insertTournament,
 } from "../../apis/tournaments";
+import TournamentSelector from "../../components/TournamentSelector/TournamentSelector";
 
 /*
  * A pool card has 3 states:
@@ -47,7 +48,7 @@ function Homepage() {
     useState(undefined);
   const [mainEditBtnToggled, setMainEditBtnToggled] = useState(false);
   const [editTournament, setEditTournament] = useState(false);
-  const selectTournamentRef = useRef();
+  // const selectTournamentRef = useRef();
   const inputTournamentRef = useRef();
   const navigate = useNavigate();
 
@@ -238,15 +239,15 @@ function Homepage() {
     setMainEditBtnToggled(!mainEditBtnToggled);
   }
 
-  function handleSelectChange(event) {
-    setCurrentTournamentId(event.target.value);
-    tournamentIsLocked(event.target.value).then((response) =>
-      setCurrentTournamentLocked(response.locked)
-    );
-    // setCurrentTournamentLock(event.target.value.lock);
-    // setCurrentTournamentId(event.target.value.id);
-    //fetchPoolAndBetData(currentTournamentId);
-  }
+  // function handleSelectChange(event) {
+  //   setCurrentTournamentId(event.target.value);
+  //   tournamentIsLocked(event.target.value).then((response) =>
+  //     setCurrentTournamentLocked(response.locked)
+  //   );
+  //   // setCurrentTournamentLock(event.target.value.lock);
+  //   // setCurrentTournamentId(event.target.value.id);
+  //   //fetchPoolAndBetData(currentTournamentId);
+  // }
 
   function handleTournamentEditBtnToggle() {
     if (
@@ -286,6 +287,7 @@ function Homepage() {
       <div
         className={`d-flex flex-fill align-items-center justify-content-center`}
       >
+        {/* 
         <label className="mr10">Tournament:</label>
         <select
           value={currentTournamentId}
@@ -302,7 +304,39 @@ function Homepage() {
         </select>
         {!!currentTournamentLocked && !mainEditBtnToggled && (
           <img src={lock_icon} alt="lock" className="icon" />
-        )}
+        )} */}
+        <TournamentSelector
+          tournamentId={currentTournamentId}
+          setTournamentId={setCurrentTournamentId}
+          tournamentLocked={currentTournamentLocked}
+          setTournamentLocked={setCurrentTournamentLocked}
+          tournamentsList={tournamentsList}
+        />
+        <div className="d-flex flex-column">
+          <p>currentTournamentId={currentTournamentId}</p>
+          <p>
+            currentTournamentDateYear=
+            {
+              //tournamentsList.find((t) => t.id === currentTournamentId)
+              //?.dateYear
+              //tournamentsList[currentTournamentId - 1].dateYear
+              tournamentsList.map((t) => {
+                return t.id === currentTournamentId ? t.dateYear : "";
+              })?.dateYear
+            }
+          </p>
+          <p>
+            currentTournamentDateYear=
+            {
+              tournamentsList.find((t) => t.id === currentTournamentId)
+                ?.dateYear
+            }
+          </p>
+          <p>
+            currentTournamentDateYear=
+            {/* {tournamentsList[currentTournamentId - 1].dateYear} */}
+          </p>
+        </div>
         {superuser &&
           mainEditBtnToggled &&
           (editTournament ? (
@@ -314,9 +348,9 @@ function Homepage() {
                 min={1900}
                 defaultValue={
                   editTournament === 2 &&
-                  selectTournamentRef.current.options[
-                    selectTournamentRef.current.selectedIndex
-                  ].text
+                  tournamentsList.find(
+                    (tournament) => tournament.id === currentTournamentId
+                  )?.dateYear
                 }
               ></input>
               <button className="btnRound" onClick={handleAddUpdateTournament}>

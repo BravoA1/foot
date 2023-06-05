@@ -35,6 +35,16 @@ export default function Header() {
       </div>
       <div className={`${styles.desktopHeader} d-flex `}>
         <ul className="flex-fill d-flex justify-content-end">
+          <Link to="/results">
+            <div className={`${styles.button}`}>
+              <span>Results</span>
+            </div>
+          </Link>
+          <Link to="/">
+            <div className={`${styles.button}`}>
+              <span>Home</span>
+            </div>
+          </Link>
           {user ? (
             <>
               <Link to="/profile">

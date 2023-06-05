@@ -5,6 +5,7 @@ import Login from "./pages/Login/Login";
 import { userLoader } from "./loaders/userLoader";
 import Profile from "./pages/Profile/Profile";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
+import ResultPage from "./pages/ResultPage/ResultPage";
 
 export const router = createBrowserRouter([
   {
@@ -28,6 +29,10 @@ export const router = createBrowserRouter([
             <Profile />
           </ProtectedRoute>
         ),
+      },
+      {
+        path: "results",
+        element: <ResultPage />,
       },
     ],
   },
