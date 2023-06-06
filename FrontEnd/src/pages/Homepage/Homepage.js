@@ -53,63 +53,59 @@ function Homepage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    (() => {
-      fetchTournamentsList()
-        .then((fetchedTournamentsList) => {
-          console.log("fetchedTournamentsList:", fetchedTournamentsList);
-          if (fetchedTournamentsList) {
-            setTournamentsList(fetchedTournamentsList);
-            const last =
-              fetchedTournamentsList[fetchedTournamentsList.length - 1];
-            setCurrentTournamentId(last.id);
-            setCurrentTournamentLocked(last.locked);
-          }
-        })
-        .catch((error) =>
-          window.alert(`Error fetching tournaments list: ${error}`)
-        );
-    })();
+    fetchTournamentsList()
+      .then((fetchedTournamentsList) => {
+        console.log("fetchedTournamentsList:", fetchedTournamentsList);
+        if (fetchedTournamentsList) {
+          setTournamentsList(fetchedTournamentsList);
+          const last =
+            fetchedTournamentsList[fetchedTournamentsList.length - 1];
+          setCurrentTournamentId(last.id);
+          setCurrentTournamentLocked(last.locked);
+        }
+      })
+      .catch((error) =>
+        window.alert(`Error fetching tournaments list: ${error}`)
+      );
   }, []);
 
   useEffect(() => {
-    (() => {
-      if (!currentTournamentId) {
-        return;
-      }
-      fetchPoolsList(currentTournamentId)
-        .then((fetchedPoolsList) => {
-          //setPoolsList(fetchedPoolsList);
-          console.log("fetchedPoolsList:", fetchedPoolsList);
-          if (fetchedPoolsList.length && user) {
-            fetchBetsList(user.id)
-              .then((fetchedBetsList) => {
-                console.log("fetchedBetsList:", fetchedBetsList);
-                if (fetchedBetsList.length) {
-                  for (let j = 0; j < fetchedBetsList.length; j++) {
-                    const poolId = fetchedBetsList[j].pool_id;
-                    for (let i = 0; i < fetchedPoolsList.length; i++) {
-                      if (fetchedPoolsList[i].id === poolId) {
-                        fetchedPoolsList[i].bet1 = fetchedBetsList[j].position1;
-                        fetchedPoolsList[i].bet2 = fetchedBetsList[j].position2;
-                        fetchedPoolsList[i].bet3 = fetchedBetsList[j].position3;
-                        fetchedPoolsList[i].bet4 = fetchedBetsList[j].position4;
-                        break;
-                      }
+    if (!currentTournamentId) {
+      return;
+    }
+    fetchPoolsList(currentTournamentId)
+      .then((fetchedPoolsList) => {
+        //setPoolsList(fetchedPoolsList);
+        console.log("fetchedPoolsList:", fetchedPoolsList);
+        if (fetchedPoolsList.length && user) {
+          fetchBetsList(user.id)
+            .then((fetchedBetsList) => {
+              console.log("fetchedBetsList:", fetchedBetsList);
+              if (fetchedBetsList.length) {
+                for (let j = 0; j < fetchedBetsList.length; j++) {
+                  const poolId = fetchedBetsList[j].pool_id;
+                  for (let i = 0; i < fetchedPoolsList.length; i++) {
+                    if (fetchedPoolsList[i].id === poolId) {
+                      fetchedPoolsList[i].bet1 = fetchedBetsList[j].position1;
+                      fetchedPoolsList[i].bet2 = fetchedBetsList[j].position2;
+                      fetchedPoolsList[i].bet3 = fetchedBetsList[j].position3;
+                      fetchedPoolsList[i].bet4 = fetchedBetsList[j].position4;
+                      break;
                     }
                   }
                 }
-                setPoolsList(fetchedPoolsList);
-              })
-              .catch((error) =>
-                window.alert(`Error fetching bets list: ${error}`)
-              );
-          } else {
-            setPoolsList(fetchedPoolsList);
-          }
-        })
-        //.then((fetchedPoolsList) => setPoolsList(fetchedPoolsList))
-        .catch((error) => window.alert(`Error fetching pools list: ${error}`));
-    })();
+              }
+              setPoolsList(fetchedPoolsList);
+            })
+            .catch((error) =>
+              window.alert(`Error fetching bets list: ${error}`)
+            );
+        } else {
+          setPoolsList(fetchedPoolsList);
+        }
+      })
+      //.then((fetchedPoolsList) => setPoolsList(fetchedPoolsList))
+      .catch((error) => window.alert(`Error fetching pools list: ${error}`));
   }, [currentTournamentId, user]);
 
   async function handleAdd(pool) {
@@ -239,16 +235,6 @@ function Homepage() {
     setMainEditBtnToggled(!mainEditBtnToggled);
   }
 
-  // function handleSelectChange(event) {
-  //   setCurrentTournamentId(event.target.value);
-  //   tournamentIsLocked(event.target.value).then((response) =>
-  //     setCurrentTournamentLocked(response.locked)
-  //   );
-  //   // setCurrentTournamentLock(event.target.value.lock);
-  //   // setCurrentTournamentId(event.target.value.id);
-  //   //fetchPoolAndBetData(currentTournamentId);
-  // }
-
   function handleTournamentEditBtnToggle() {
     if (
       updateTournamentLocked(
@@ -284,27 +270,7 @@ function Homepage() {
           </div>
         </>
       )}
-      <div
-        className={`d-flex flex-fill align-items-center justify-content-center`}
-      >
-        {/* 
-        <label className="mr10">Tournament:</label>
-        <select
-          value={currentTournamentId}
-          onChange={handleSelectChange}
-          className="mr10"
-          ref={selectTournamentRef}
-        >
-          {tournamentsList &&
-            tournamentsList.map((tournament) => (
-              <option key={tournament.id} value={tournament.id}>
-                {tournament.dateYear}
-              </option>
-            ))}
-        </select>
-        {!!currentTournamentLocked && !mainEditBtnToggled && (
-          <img src={lock_icon} alt="lock" className="icon" />
-        )} */}
+      <div className={`d-flex align-items-center justify-content-center m10`}>
         <TournamentSelector
           tournamentId={currentTournamentId}
           setTournamentId={setCurrentTournamentId}
@@ -312,31 +278,6 @@ function Homepage() {
           setTournamentLocked={setCurrentTournamentLocked}
           tournamentsList={tournamentsList}
         />
-        <div className="d-flex flex-column">
-          <p>currentTournamentId={currentTournamentId}</p>
-          <p>
-            currentTournamentDateYear=
-            {
-              //tournamentsList.find((t) => t.id === currentTournamentId)
-              //?.dateYear
-              //tournamentsList[currentTournamentId - 1].dateYear
-              tournamentsList.map((t) => {
-                return t.id === currentTournamentId ? t.dateYear : "";
-              })?.dateYear
-            }
-          </p>
-          <p>
-            currentTournamentDateYear=
-            {
-              tournamentsList.find((t) => t.id === currentTournamentId)
-                ?.dateYear
-            }
-          </p>
-          <p>
-            currentTournamentDateYear=
-            {/* {tournamentsList[currentTournamentId - 1].dateYear} */}
-          </p>
-        </div>
         {superuser &&
           mainEditBtnToggled &&
           (editTournament ? (
@@ -349,7 +290,8 @@ function Homepage() {
                 defaultValue={
                   editTournament === 2 &&
                   tournamentsList.find(
-                    (tournament) => tournament.id === currentTournamentId
+                    (tournament) =>
+                      parseInt(tournament.id) === parseInt(currentTournamentId)
                   )?.dateYear
                 }
               ></input>

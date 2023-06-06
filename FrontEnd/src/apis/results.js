@@ -1,8 +1,10 @@
 const API_RESULTS = "/api/results";
 
-export async function fetchResultsList() {
+export async function fetchResultsList(tournamentId) {
   try {
-    const response = await fetch(`${API_RESULTS}/fetchResultsList`);
+    const response = await fetch(
+      `${API_RESULTS}/fetchResultsList/${tournamentId}`
+    );
     return response.ok ? response.json() : null;
   } catch (error) {
     window.alert(`Frontend error catched in fetchResultsList: ${error}`);

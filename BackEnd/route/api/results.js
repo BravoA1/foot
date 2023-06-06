@@ -1,16 +1,20 @@
 const router = require("express").Router();
 const connection = require("../../database/index");
 
-router.get("/fetchResult/:tournamentId", async (req, res) => {
+router.get("/fetchResultsList/:tournamentId", async (req, res) => {
   const tournament_id = req.params.tournamentId;
-  const selectStmt = "SELECT * FROM result WHERE tournament_id=?";
+  const selectStmt = `SELECT result.resultTournament, user.username 
+  FROM result 
+  LEFT JOIN user ON user.id=result.user_id 
+  WHERE result.tournament_id=?
+  ORDER BY result.resultTournament DESC`;
   connection.query(selectStmt, tournament_id, (error, result) => {
     if (error) {
       console.error("Error executing MySQL query:", error);
       res.status(500).send("Error executing MySQL query");
     }
     //console.log("result tournament locked:", result[0]);
-    res.status(202).send(result[0] ? result[0] : JSON.stringify(null));
+    res.status(202).send(result ? result : JSON.stringify(null));
   });
 });
 
