@@ -6,6 +6,7 @@ import { userLoader } from "./loaders/userLoader";
 import Profile from "./pages/Profile/Profile";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import ResultPage from "./pages/ResultPage/ResultPage";
+import Rulespage from "./pages/Rulespage/Rulespage";
 
 export const router = createBrowserRouter([
   {
@@ -33,6 +34,10 @@ export const router = createBrowserRouter([
       {
         path: "results",
         element: <ResultPage />,
+      },
+      {
+        path: "rules",
+        element: <Rulespage />,
       },
     ],
   },

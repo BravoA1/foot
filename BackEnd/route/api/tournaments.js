@@ -36,6 +36,8 @@ router.put(
       if (error) {
         console.error("Error executing MySQL query:", error);
         res.status(500).send("Error executing MySQL query");
+      } else {
+        res.status(200).json(true);
       }
     });
   }
@@ -87,6 +89,31 @@ router.post("/updateTournament", async (req, res) => {
         }
       });
     }
+  });
+});
+
+router.get("/tournamentClosed/:tournamentId", async (req, res) => {
+  const tournament_id = req.params.tournamentId;
+  const selectStmt = "SELECT closed FROM tournament WHERE id=?";
+  connection.query(selectStmt, tournament_id, (error, result) => {
+    if (error) {
+      console.error("Error executing MySQL query:", error);
+      res.status(500).send("Error executing MySQL query");
+    }
+    //console.log("result tournament locked:", result[0]);
+    res.status(202).send(result[0] ? result[0] : JSON.stringify(null));
+  });
+});
+
+router.put("/setTournamentClosed/:tournamentId", async (req, res) => {
+  const id = req.params.tournamentId;
+  const updateStmt = "UPDATE tournament SET closed='1', locked='1' WHERE id=?";
+  connection.query(updateStmt, [id], (error, result) => {
+    if (error) {
+      console.error("Error executing MySQL query:", error);
+      res.status(500).send("Error executing MySQL query");
+    }
+    res.status(204);
   });
 });
 

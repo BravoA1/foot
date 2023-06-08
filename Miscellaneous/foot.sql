@@ -127,7 +127,7 @@ CREATE TABLE `tournament` (
   `id` int(11) NOT NULL,
   `dateYear` int(11) DEFAULT NULL,
   `locked` tinyint(1) DEFAULT 0,
-  `closed` tinyint(1) DEFAULT 0,
+  `closed` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --

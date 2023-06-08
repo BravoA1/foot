@@ -10,6 +10,7 @@ function ResultPage() {
   const [resultsList, setResultsList] = useState([]);
   const [currentTournamentId, setCurrentTournamentId] = useState(undefined);
   const [currentTournamentLocked, setCurrentTournamentLocked] = useState(false);
+
   useEffect(() => {
     fetchTournamentsList()
       .then((fetchedTournamentsList) => {
@@ -41,6 +42,14 @@ function ResultPage() {
       .catch((error) => window.alert(`Error fetching results list: ${error}`));
   }, [currentTournamentId]);
 
+  useEffect(() => {
+    const currentTournament = tournamentsList.find(
+      (tournament) => parseInt(tournament.id) === parseInt(currentTournamentId)
+    );
+    if (!currentTournament) return;
+    setCurrentTournamentLocked(currentTournament.locked);
+  }, [currentTournamentId, tournamentsList]);
+
   return (
     <>
       <div className={`d-flex align-items-center justify-content-center mt10`}>
@@ -48,7 +57,6 @@ function ResultPage() {
           tournamentId={currentTournamentId}
           tournamentLocked={currentTournamentLocked}
           setTournamentId={setCurrentTournamentId}
-          setTournamentLocked={setCurrentTournamentLocked}
           tournamentsList={tournamentsList}
         />
       </div>

@@ -27,7 +27,7 @@ export default function Header() {
   return (
     <header className={`d-flex align-items-center ${styles.header}`}>
       <div className={``}>
-        <div className={`${styles.button}d-flex justify-content-star`}>
+        <div className={`${styles.button}`}>
           <Link to="/">
             <img src={logo} alt="Logo" />
           </Link>
@@ -35,6 +35,11 @@ export default function Header() {
       </div>
       <div className={`${styles.desktopHeader} d-flex `}>
         <ul className="flex-fill d-flex justify-content-end">
+          <Link to="/rules">
+            <div className={`${styles.button}`}>
+              <span>Rules</span>
+            </div>
+          </Link>
           <Link to="/results">
             <div className={`${styles.button}`}>
               <span>Results</span>

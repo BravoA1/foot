@@ -1,5 +1,6 @@
 import { fetchBetsListTournament, updateResultBet } from "../apis/bets";
 import { insertResults } from "../apis/results";
+import { setTournamentClosed } from "../apis/tournaments";
 
 export function getTeamPositions(pool) {
   const scores = [pool.score1, pool.score2, pool.score3, pool.score4];
@@ -14,8 +15,15 @@ export function getTeamPositions(pool) {
 }
 
 export async function endTournament(tournamentId) {
+  console.log("endTournament:", endTournament);
   try {
-    const betsList = fetchBetsListTournament(tournamentId);
+    // check if tournament already closed:
+    // const closed = await tournamentIsClosed(tournamentId);
+    // if (closed) return;
+    // then set it to closed:
+    setTournamentClosed(tournamentId);
+    const betsList = await fetchBetsListTournament(tournamentId);
+    console.log("betsList:", betsList);
     const listUserResult = new Map();
     for (const bet of betsList) {
       let totalBet = 0;
@@ -32,18 +40,23 @@ export async function endTournament(tournamentId) {
           break;
         case 2:
           totalBet = 10;
-          if (first === second) totalBet += 10;
+          if (first) totalBet += 10;
           break;
         case 1:
           totalBet = 1;
-          if (first === second) totalBet += 4;
+          if (first) totalBet += 4;
           break;
         default:
           break;
       }
+      console.log(
+        `user: ${bet.user_id} pool: ${bet.pool_id}
+         correct: ${totalMatches}
+         total bet: ${totalBet}`
+      );
       //insert result in database table bet column resultBet
       updateResultBet(bet.user_id, bet.pool_id, totalBet);
-      //keep (userId,result) in a hash map
+      //keep (userId,result) in a hash map for total
       if (!listUserResult.has(bet.user_id)) {
         listUserResult.set(bet.user_id, totalBet);
       } else {
@@ -55,6 +68,11 @@ export async function endTournament(tournamentId) {
     }
     //insert total in database table result column resultTournament
     for (const [key, value] of listUserResult) {
+      console.log(
+        `user: ${key} 
+         tournament: ${tournamentId}
+         total tournament: ${value}`
+      );
       insertResults({
         tournament_id: tournamentId,
         user_id: key,

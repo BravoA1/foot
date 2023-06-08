@@ -4,14 +4,14 @@ import styles from "./MobileMenu.module.scss";
 export default function MobileMenu() {
   return (
     <div className={`card ${styles.menuContainer} `}>
-      <div className="d-flex justify-content-start">
+      <div className="d-flex justify-content-end">
         <div>
           <Link to="/" className="decoNone">
             <button className="d-flex justify-content-center las la-home la-2x btn-primary"></button>
           </Link>
         </div>
         <div>
-          <Link to="/search" className="decoNone">
+          <Link to="/" className="decoNone">
             <button className="d-flex justify-content-center align-items-center las la-search la-2x btn-primary"></button>
           </Link>
         </div>

@@ -114,4 +114,21 @@ router.post("/updateBet", async (req, res) => {
   );
 });
 
+router.put("/updateResultBet/:userId-:poolId-:betResult", async (req, res) => {
+  const user_id = req.params.userId;
+  const pool_id = req.params.poolId;
+  const betResult = req.params.betResult;
+  const updateStmt = `UPDATE bet SET
+  resultBet=? 
+  WHERE user_id=? AND pool_id=?`;
+  connection.query(updateStmt, [betResult, user_id, pool_id], (error) => {
+    if (error) {
+      console.error("Error executing MySQL query:", error);
+      res.status(500).json({ error: `Error updateResultBet: ${error}` });
+    } else {
+      res.status(204);
+    }
+  });
+});
+
 module.exports = router;

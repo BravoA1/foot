@@ -20,12 +20,12 @@ import {
 import { fetchBetsList, insertBet, updateBet } from "../../apis/bets";
 import {
   fetchTournamentsList,
-  // tournamentIsLocked,
   updateTournamentLocked,
   updateTournament,
   insertTournament,
 } from "../../apis/tournaments";
 import TournamentSelector from "../../components/TournamentSelector/TournamentSelector";
+import { endTournament } from "../../helper/helper";
 
 /*
  * A pool card has 3 states:
@@ -46,12 +46,17 @@ function Homepage() {
   const [currentTournamentId, setCurrentTournamentId] = useState(undefined);
   const [currentTournamentLocked, setCurrentTournamentLocked] =
     useState(undefined);
+  const [currentTournamentClosed, setCurrentTournamentClosed] =
+    useState(undefined);
+  const [currentTournamentDateYear, setCurrentTournamentDateYear] =
+    useState(undefined);
   const [mainEditBtnToggled, setMainEditBtnToggled] = useState(false);
   const [editTournament, setEditTournament] = useState(false);
   // const selectTournamentRef = useRef();
   const inputTournamentRef = useRef();
   const navigate = useNavigate();
 
+  // fetch tournaments' list
   useEffect(() => {
     fetchTournamentsList()
       .then((fetchedTournamentsList) => {
@@ -62,6 +67,8 @@ function Homepage() {
             fetchedTournamentsList[fetchedTournamentsList.length - 1];
           setCurrentTournamentId(last.id);
           setCurrentTournamentLocked(last.locked);
+          setCurrentTournamentClosed(last.closed);
+          setCurrentTournamentDateYear(last.dateYear);
         }
       })
       .catch((error) =>
@@ -69,6 +76,18 @@ function Homepage() {
       );
   }, []);
 
+  // set current tournaments' properties
+  useEffect(() => {
+    const currentTournament = tournamentsList.find(
+      (tournament) => parseInt(tournament.id) === parseInt(currentTournamentId)
+    );
+    if (!currentTournament) return;
+    setCurrentTournamentLocked(currentTournament.locked);
+    setCurrentTournamentClosed(currentTournament.closed);
+    setCurrentTournamentDateYear(currentTournament.dateYear);
+  }, [currentTournamentId, tournamentsList]);
+
+  // fetch pools' list depends on user and currentTournamentId
   useEffect(() => {
     if (!currentTournamentId) {
       return;
@@ -108,6 +127,7 @@ function Homepage() {
       .catch((error) => window.alert(`Error fetching pools list: ${error}`));
   }, [currentTournamentId, user]);
 
+  // Add pool function
   async function handleAdd(pool) {
     pool.tournament_id = currentTournamentId;
     const insertedData = await insertPool(pool);
@@ -118,6 +138,7 @@ function Homepage() {
     }
   }
 
+  // Delete pool function
   async function handleDelete(pool) {
     pool.tournament_id = currentTournamentId;
     if (deletePool(pool)) {
@@ -127,6 +148,7 @@ function Homepage() {
     }
   }
 
+  // Update pool function
   async function handleUpdate(pool) {
     pool.tournament_id = currentTournamentId;
     const updatedData = await updatePool(pool);
@@ -140,6 +162,7 @@ function Homepage() {
     }
   }
 
+  // Add bet function
   async function handleBetAdd(bet) {
     //console.log(bet);
     bet.user_id = user.id;
@@ -160,6 +183,7 @@ function Homepage() {
     }
   }
 
+  // Update bet function
   async function handleBetUpdate(bet) {
     bet.user_id = user.id;
     const updatedBet = await updateBet(bet);
@@ -179,6 +203,7 @@ function Homepage() {
     }
   }
 
+  // Add & Update tournament function
   function handleAddUpdateTournament() {
     switch (editTournament) {
       case 1:
@@ -216,6 +241,12 @@ function Homepage() {
     }
   }
 
+  /* Edit pool:
+   * pool.onEdit=
+   *             0: no edit
+   *             1: super user edit
+   *             2: normal user edit (bet)
+   */
   function handleEdit(pool) {
     if (!user) {
       navigate("/login");
@@ -231,20 +262,25 @@ function Homepage() {
     );
   }
 
+  // Enter/Exit super user edit mode funcion
   function handleMainEditBtnToggle() {
     setMainEditBtnToggled(!mainEditBtnToggled);
   }
 
-  function handleTournamentEditBtnToggle() {
-    if (
-      updateTournamentLocked(
-        currentTournamentId,
-        currentTournamentLocked ? 0 : 1
-      )
-    ) {
-      setCurrentTournamentLocked(!currentTournamentLocked);
+  // Toggle on/off locked tournament
+  function handleTournamentLockToggle() {
+    updateTournamentLocked(
+      currentTournamentId,
+      currentTournamentLocked ? 0 : 1
+    ).then((response) => {
+      // console.log("response:", response);
+      if (response) {
+        setCurrentTournamentLocked(!currentTournamentLocked);
+      } else {
+        window.alert("Tournament cannot be unlocked because it is closed");
+      }
       setMainEditBtnToggled(false);
-    }
+    });
   }
 
   return (
@@ -262,12 +298,19 @@ function Homepage() {
               <img src={edit_icon} alt="Edit" />
             )}
           </div>
-          <div
-            className={`${style.floatingBottom} btnRound`}
-            onClick={() => window.alert("This button does nothing yet")}
-          >
-            <img src={betclose_icon} alt="Bet Closed" />
-          </div>
+          {!currentTournamentClosed && (
+            <div
+              className={`${style.floatingBottom} btnRound`}
+              //onClick={() => window.alert("This button does nothing yet")}
+              onClick={() => {
+                endTournament(currentTournamentId);
+                setCurrentTournamentClosed(1);
+                setCurrentTournamentLocked(1);
+              }}
+            >
+              <img src={betclose_icon} alt="Bet Closed" />
+            </div>
+          )}
         </>
       )}
       <div className={`d-flex align-items-center justify-content-center m10`}>
@@ -275,7 +318,6 @@ function Homepage() {
           tournamentId={currentTournamentId}
           setTournamentId={setCurrentTournamentId}
           tournamentLocked={currentTournamentLocked}
-          setTournamentLocked={setCurrentTournamentLocked}
           tournamentsList={tournamentsList}
         />
         {superuser &&
@@ -287,13 +329,7 @@ function Homepage() {
                 ref={inputTournamentRef}
                 type="number"
                 min={1900}
-                defaultValue={
-                  editTournament === 2 &&
-                  tournamentsList.find(
-                    (tournament) =>
-                      parseInt(tournament.id) === parseInt(currentTournamentId)
-                  )?.dateYear
-                }
+                defaultValue={editTournament === 2 && currentTournamentDateYear}
               ></input>
               <button className="btnRound" onClick={handleAddUpdateTournament}>
                 {editTournament === 1 && <img src={add_icon} alt="Add" />}
@@ -305,10 +341,7 @@ function Homepage() {
             </>
           ) : (
             <>
-              <button
-                className="btnRound"
-                onClick={handleTournamentEditBtnToggle}
-              >
+              <button className="btnRound" onClick={handleTournamentLockToggle}>
                 {!!currentTournamentLocked ? (
                   <img src={unlock_icon} alt="unlock" />
                 ) : (
