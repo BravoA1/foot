@@ -54,16 +54,16 @@ function Rulespage() {
       <h4>Full house: every positions matches.</h4>
       <p>100 points</p>
       <p>Example:</p>
-      <PoolCard pool={pool_full} handleEdit={() => {}} />
+      <PoolCard pool={pool_full} handleEditPool={() => {}} />
       <h4>Pair: Two positions matches</h4>
       <p>10 points</p>
       <p>+10 points if first and second match</p>
       <p>Example:</p>
-      <PoolCard pool={pool_double} handleEdit={() => {}} />
+      <PoolCard pool={pool_double} handleEditPool={() => {}} />
       <h4>Simple: One position matches</h4>
       <p>1 point</p>
       <p>+4 points if first matches</p>
-      <PoolCard pool={pool_simple} handleEdit={() => {}} />
+      <PoolCard pool={pool_simple} handleEditPool={() => {}} />
     </div>
   );
 }

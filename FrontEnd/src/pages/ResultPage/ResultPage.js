@@ -29,6 +29,7 @@ function ResultPage() {
   }, []);
 
   useEffect(() => {
+    if (!currentTournamentId) return;
     fetchResultsList(currentTournamentId)
       .then((fetchedResultsList) => {
         //console.log("fetchedResultsList:", fetchedResultsList);

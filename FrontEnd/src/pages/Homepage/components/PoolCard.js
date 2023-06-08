@@ -18,8 +18,8 @@ import { getTeamPositions } from "../../../helper/helper";
 function PoolCard({
   pool = null,
   mainEditBtnToggled,
-  handleDelete,
-  handleEdit,
+  handleDeletePool,
+  handleEditPool,
 }) {
   const [positionsList, setPositionsList] = useState([]);
   //const [localeEditBtnToggled, setLocaleEditBtnToggled] = useState(false);
@@ -31,14 +31,14 @@ function PoolCard({
   function handleLocaleEditBtnToggle() {
     //setLocaleEditBtnToggled(!localeEditBtnToggled);
     pool.onEdit = 1;
-    handleEdit(pool);
+    handleEditPool(pool);
   }
   function handleLocaleBetEditToggle() {
     pool.onEdit = 2;
-    handleEdit(pool);
+    handleEditPool(pool);
   }
   function handleLocaleDeleteBtnToggle() {
-    handleDelete(pool);
+    handleDeletePool(pool);
   }
   return (
     <div className="d-flex flex-column align-items-center">

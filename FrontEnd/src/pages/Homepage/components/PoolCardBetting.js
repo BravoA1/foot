@@ -16,10 +16,15 @@ import { yupResolver } from "@hookform/resolvers/yup";
  *                 - case edit pool: edition is enabled + icon register + icon cancel
  */
 
-function PoolCardEdition({ pool, handleBetAdd, handleBetUpdate, handleEdit }) {
+function PoolCardEdition({
+  pool,
+  handleInsertBet,
+  handleUpdateBet,
+  handleEditPool,
+}) {
   function handleLocaleCancelBtnToggle() {
     pool.onEdit = 0;
-    handleEdit(pool);
+    handleEditPool(pool);
   }
   const validationSchema = yup.object({
     bet1: yup.number().min(1).max(4),
@@ -53,9 +58,9 @@ function PoolCardEdition({ pool, handleBetAdd, handleBetUpdate, handleEdit }) {
       defaultValues.bet3 &&
       defaultValues.bet4
     ) {
-      handleBetUpdate(values);
+      handleUpdateBet(values);
     } else {
-      handleBetAdd(values);
+      handleInsertBet(values);
     }
     //setLocaleEditBtnToggled(false);
   });

@@ -22,9 +22,9 @@ import { yupResolver } from "@hookform/resolvers/yup";
 function PoolCardEdition({
   pool,
   newPool = false,
-  handleAdd,
-  handleUpdate,
-  handleEdit,
+  handleInsertPool,
+  handleUpdatePool,
+  handleEditPool,
 }) {
   const [teamsList, setTeamsList] = useState([]);
   const [newPoolIdle, setNewPoolIdle] = useState(newPool);
@@ -57,7 +57,7 @@ function PoolCardEdition({
       setNewPoolIdle(true);
     } else {
       pool.onEdit = 0;
-      handleEdit(pool);
+      handleEditPool(pool);
     }
   }
   function handleSelectChange(event, select) {
@@ -131,11 +131,11 @@ function PoolCardEdition({
   const submit = handleSubmit((values) => {
     clearErrors();
     if (newPool) {
-      handleAdd(values);
+      handleInsertPool(values);
       //setLocaleEditBtnToggled(false);
     } else {
       values.id = pool.id;
-      handleUpdate(values);
+      handleUpdatePool(values);
       //setLocaleEditBtnToggled(false);
     }
   });

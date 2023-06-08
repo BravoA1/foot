@@ -128,7 +128,7 @@ function Homepage() {
   }, [currentTournamentId, user]);
 
   // Add pool function
-  async function handleAdd(pool) {
+  async function handleInsertPool(pool) {
     pool.tournament_id = currentTournamentId;
     const insertedData = await insertPool(pool);
     //console.log("insertedData:", insertedData);
@@ -139,7 +139,7 @@ function Homepage() {
   }
 
   // Delete pool function
-  async function handleDelete(pool) {
+  async function handleDeletePool(pool) {
     pool.tournament_id = currentTournamentId;
     if (deletePool(pool)) {
       setPoolsList((previousPoolsList) =>
@@ -149,7 +149,7 @@ function Homepage() {
   }
 
   // Update pool function
-  async function handleUpdate(pool) {
+  async function handleUpdatePool(pool) {
     pool.tournament_id = currentTournamentId;
     const updatedData = await updatePool(pool);
     if (updatedData) {
@@ -163,7 +163,7 @@ function Homepage() {
   }
 
   // Add bet function
-  async function handleBetAdd(bet) {
+  async function handleInsertBet(bet) {
     //console.log(bet);
     bet.user_id = user.id;
     const insertedBet = await insertBet(bet);
@@ -184,7 +184,7 @@ function Homepage() {
   }
 
   // Update bet function
-  async function handleBetUpdate(bet) {
+  async function handleUpdateBet(bet) {
     bet.user_id = user.id;
     const updatedBet = await updateBet(bet);
     if (updatedBet) {
@@ -204,7 +204,7 @@ function Homepage() {
   }
 
   // Add & Update tournament function
-  function handleAddUpdateTournament() {
+  function handleInsertUpdateTournament() {
     switch (editTournament) {
       case 1:
         insertTournament({
@@ -247,7 +247,7 @@ function Homepage() {
    *             1: super user edit
    *             2: normal user edit (bet)
    */
-  function handleEdit(pool) {
+  function handleEditPool(pool) {
     if (!user) {
       navigate("/login");
       return;
@@ -263,12 +263,19 @@ function Homepage() {
   }
 
   // Enter/Exit super user edit mode funcion
-  function handleMainEditBtnToggle() {
+  function handleHomepageEditBtn() {
     setMainEditBtnToggled(!mainEditBtnToggled);
+    setEditTournament(false);
+    setPoolsList((previousPoolsList) =>
+      previousPoolsList.map((poolItem) => {
+        poolItem.onEdit = 0;
+        return poolItem;
+      })
+    );
   }
 
   // Toggle on/off locked tournament
-  function handleTournamentLockToggle() {
+  function handleHomepageLockBtn() {
     updateTournamentLocked(
       currentTournamentId,
       currentTournamentLocked ? 0 : 1
@@ -290,7 +297,7 @@ function Homepage() {
           <div
             //className={`${style.floating} ${style.btnRound}`}
             className={`${style.floatingTop} btnRound`}
-            onClick={handleMainEditBtnToggle}
+            onClick={handleHomepageEditBtn}
           >
             {mainEditBtnToggled ? (
               <img src={close_icon} alt="Close" />
@@ -331,7 +338,10 @@ function Homepage() {
                 min={1900}
                 defaultValue={editTournament === 2 && currentTournamentDateYear}
               ></input>
-              <button className="btnRound" onClick={handleAddUpdateTournament}>
+              <button
+                className="btnRound"
+                onClick={handleInsertUpdateTournament}
+              >
                 {editTournament === 1 && <img src={add_icon} alt="Add" />}
                 {editTournament === 2 && <img src={edit_icon} alt="Edit" />}
               </button>
@@ -341,7 +351,7 @@ function Homepage() {
             </>
           ) : (
             <>
-              <button className="btnRound" onClick={handleTournamentLockToggle}>
+              <button className="btnRound" onClick={handleHomepageLockBtn}>
                 {!!currentTournamentLocked ? (
                   <img src={unlock_icon} alt="unlock" />
                 ) : (
@@ -371,8 +381,8 @@ function Homepage() {
                     pool={e}
                     key={e.id}
                     mainEditBtnToggled={mainEditBtnToggled}
-                    handleDelete={handleDelete}
-                    handleEdit={handleEdit}
+                    handleDeletePool={handleDeletePool}
+                    handleEditPool={handleEditPool}
                   />
                 );
               case 1:
@@ -381,10 +391,10 @@ function Homepage() {
                     pool={e}
                     key={e.id}
                     mainEditBtnToggled={mainEditBtnToggled}
-                    handleAdd={handleAdd}
-                    handleUpdate={handleUpdate}
-                    handleDelete={handleDelete}
-                    handleEdit={handleEdit}
+                    handleInsertPool={handleInsertPool}
+                    handleUpdatePool={handleUpdatePool}
+                    handleDeletePool={handleDeletePool}
+                    handleEditPool={handleEditPool}
                   />
                 );
               case 2:
@@ -392,9 +402,9 @@ function Homepage() {
                   <PoolCardBetting
                     pool={e}
                     key={e.id}
-                    handleEdit={handleEdit}
-                    handleBetAdd={handleBetAdd}
-                    handleBetUpdate={handleBetUpdate}
+                    handleEditPool={handleEditPool}
+                    handleInsertBet={handleInsertBet}
+                    handleUpdateBet={handleUpdateBet}
                   />
                 );
               default:
@@ -405,9 +415,9 @@ function Homepage() {
           <PoolCardEdition
             newPool={true}
             mainEditBtnToggled={mainEditBtnToggled}
-            handleAdd={handleAdd}
-            handleUpdate={handleUpdate}
-            handleDelete={handleDelete}
+            handleInsertPool={handleInsertPool}
+            handleUpdatePool={handleUpdatePool}
+            handleDeletePool={handleDeletePool}
           />
         )}
       </div>
