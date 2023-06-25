@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import logo from "../../assets/images/foot.jpg";
+import logo from "../../assets/images/foot.png";
 import styles from "./Header.module.scss";
 import { useContext, useState } from "react";
 import MobileMenu from "./components/MobileMenu";
@@ -26,12 +26,10 @@ export default function Header() {
 
   return (
     <header className={`d-flex align-items-center ${styles.header}`}>
-      <div className={``}>
-        <div className={`${styles.button}`}>
-          <Link to="/">
-            <img src={logo} alt="Logo" />
-          </Link>
-        </div>
+      <div className={`${styles.button_logo}`}>
+        <Link to="/">
+          <img src={logo} alt="Logo" />
+        </Link>
       </div>
       <div className={`${styles.desktopHeader} d-flex `}>
         <ul className="flex-fill d-flex justify-content-end">

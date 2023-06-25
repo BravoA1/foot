@@ -1,6 +1,6 @@
 import style from "./Card.module.scss";
 import plus_icon from "../../../assets/images/icon-plus.svg";
-import add_icon from "../../../assets/images/add.svg";
+import apply_icon from "../../../assets/images/apply.svg";
 import close_icon from "../../../assets/images/cancel.svg";
 import { useState, useEffect } from "react";
 import { fetchTeamsList } from "../../../apis/teams";
@@ -44,15 +44,13 @@ function PoolCardEdition({
       }
     };
     fetchAndSetTeamsList();
-    //   setPositionsList(pool ? getTeamPositions(pool) : []);
-    // }, [pool]);
   }, []);
+
   function handleLocaleEditBtnToggle() {
     setNewPoolIdle(false);
-    //setLocaleEditBtnToggled(!localeEditBtnToggled);
   }
+
   function handleLocaleCancelBtnToggle() {
-    //setLocaleEditBtnToggled(false);
     if (newPool) {
       setNewPoolIdle(true);
     } else {
@@ -60,6 +58,7 @@ function PoolCardEdition({
       handleEditPool(pool);
     }
   }
+
   function handleSelectChange(event, select) {
     switch (select) {
       case 1:
@@ -78,6 +77,7 @@ function PoolCardEdition({
         break;
     }
   }
+
   const validationSchema = yup.object({
     team_1_id: yup
       .number()
@@ -132,13 +132,12 @@ function PoolCardEdition({
     clearErrors();
     if (newPool) {
       handleInsertPool(values);
-      //setLocaleEditBtnToggled(false);
     } else {
       values.id = pool.id;
       handleUpdatePool(values);
-      //setLocaleEditBtnToggled(false);
     }
   });
+
   return (
     <div className="d-flex flex-column align-items-center">
       {newPoolIdle ? (
@@ -286,7 +285,7 @@ function PoolCardEdition({
             </div>
             <div className="d-flex flex-row align-items-center">
               <button disabled={isSubmitting} className="btnRound">
-                <img src={add_icon} alt="add" />
+                <img src={apply_icon} alt="apply" />
               </button>
               <button
                 onClick={handleLocaleCancelBtnToggle}

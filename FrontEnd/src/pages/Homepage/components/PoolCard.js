@@ -22,24 +22,25 @@ function PoolCard({
   handleEditPool,
 }) {
   const [positionsList, setPositionsList] = useState([]);
-  //const [localeEditBtnToggled, setLocaleEditBtnToggled] = useState(false);
 
   useEffect(() => {
     setPositionsList(pool ? getTeamPositions(pool) : []);
   }, [pool]);
 
   function handleLocaleEditBtnToggle() {
-    //setLocaleEditBtnToggled(!localeEditBtnToggled);
     pool.onEdit = 1;
     handleEditPool(pool);
   }
+
   function handleLocaleBetEditToggle() {
     pool.onEdit = 2;
     handleEditPool(pool);
   }
+
   function handleLocaleDeleteBtnToggle() {
     handleDeletePool(pool);
   }
+
   return (
     <div className="d-flex flex-column align-items-center">
       <div

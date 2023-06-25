@@ -1,3 +1,4 @@
+import { Tooltip } from "react-tooltip";
 import lock_icon from "../../assets/images/lock.svg";
 
 function TournamentSelector({
@@ -17,6 +18,8 @@ function TournamentSelector({
         value={tournamentId}
         onChange={handleSelectChange}
         className="mr10"
+        data-tooltip-id="selectTournament"
+        data-tooltip-content="Change current tournament"
       >
         {tournamentsList &&
           tournamentsList.map((tournament) => (
@@ -25,8 +28,18 @@ function TournamentSelector({
             </option>
           ))}
       </select>
+      <Tooltip id="selectTournament" />
       {!!tournamentLocked && (
-        <img src={lock_icon} alt="lock" className="icon" />
+        <>
+          <img
+            src={lock_icon}
+            alt="lock"
+            className="icon"
+            data-tooltip-id="locked"
+            data-tooltip-content="Betting is disabled"
+          />
+          <Tooltip id="locked" />
+        </>
       )}
     </>
   );

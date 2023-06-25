@@ -51,19 +51,20 @@ function Rulespage() {
       <h3>How to bet:</h3>
       <p>Rank each team by pool</p>
       <h3>How the results are determined:</h3>
-      <h4>Full house: every positions matches.</h4>
-      <p>100 points</p>
+      <h4>Simple: One position matches</h4>
+      <p>1 point</p>
+      <p>+4 points if first matches</p>
       <p>Example:</p>
-      <PoolCard pool={pool_full} handleEditPool={() => {}} />
+      <PoolCard pool={pool_simple} handleEditPool={() => {}} />
       <h4>Pair: Two positions matches</h4>
       <p>10 points</p>
       <p>+10 points if first and second match</p>
       <p>Example:</p>
       <PoolCard pool={pool_double} handleEditPool={() => {}} />
-      <h4>Simple: One position matches</h4>
-      <p>1 point</p>
-      <p>+4 points if first matches</p>
-      <PoolCard pool={pool_simple} handleEditPool={() => {}} />
+      <h4>Full house: every positions match.</h4>
+      <p>100 points</p>
+      <p>Example:</p>
+      <PoolCard pool={pool_full} handleEditPool={() => {}} />
     </div>
   );
 }

@@ -26,6 +26,7 @@ import {
 } from "../../apis/tournaments";
 import TournamentSelector from "../../components/TournamentSelector/TournamentSelector";
 import { endTournament } from "../../helper/helper";
+import { Tooltip } from "react-tooltip";
 
 /*
  * A pool card has 3 states:
@@ -52,7 +53,6 @@ function Homepage() {
     useState(undefined);
   const [mainEditBtnToggled, setMainEditBtnToggled] = useState(false);
   const [editTournament, setEditTournament] = useState(false);
-  // const selectTournamentRef = useRef();
   const inputTournamentRef = useRef();
   const navigate = useNavigate();
 
@@ -295,15 +295,25 @@ function Homepage() {
       {superuser && (
         <>
           <div
-            //className={`${style.floating} ${style.btnRound}`}
             className={`${style.floatingTop} btnRound`}
             onClick={handleHomepageEditBtn}
           >
             {mainEditBtnToggled ? (
-              <img src={close_icon} alt="Close" />
+              <img
+                src={close_icon}
+                data-tooltip-id="mainEdit"
+                data-tooltip-content="Close edition mode"
+                alt="Close"
+              />
             ) : (
-              <img src={edit_icon} alt="Edit" />
+              <img
+                src={edit_icon}
+                data-tooltip-id="mainEdit"
+                data-tooltip-content="Enter edition mode"
+                alt="Edit"
+              />
             )}
+            <Tooltip id="mainEdit" />
           </div>
           {!currentTournamentClosed && (
             <div
@@ -315,7 +325,13 @@ function Homepage() {
                 setCurrentTournamentLocked(1);
               }}
             >
-              <img src={betclose_icon} alt="Bet Closed" />
+              <img
+                src={betclose_icon}
+                alt="Bet Closed"
+                data-tooltip-id="closeBet"
+                data-tooltip-content="Close the bet"
+              />
+              <Tooltip id="closeBet" />
             </div>
           )}
         </>
@@ -342,34 +358,76 @@ function Homepage() {
                 className="btnRound"
                 onClick={handleInsertUpdateTournament}
               >
-                {editTournament === 1 && <img src={add_icon} alt="Add" />}
-                {editTournament === 2 && <img src={edit_icon} alt="Edit" />}
+                {editTournament === 1 && (
+                  <img
+                    src={add_icon}
+                    alt="Add"
+                    data-tooltip-content="Add tournament"
+                    data-tooltip-id="IUtournament"
+                  />
+                )}
+                {editTournament === 2 && (
+                  <img
+                    src={edit_icon}
+                    alt="Edit"
+                    data-tooltip-content="Edit tournament"
+                    data-tooltip-id="IUtournament"
+                  />
+                )}
               </button>
+              <Tooltip id="IUtournament" />
               <button className="btnRound" onClick={() => setEditTournament(0)}>
-                <img src={close_icon} alt="Cancel" />
+                <img
+                  src={close_icon}
+                  alt="Cancel"
+                  data-tooltip-content="Go back"
+                  data-tooltip-id="cancelIUtournament"
+                />
               </button>
+              <Tooltip id="cancelIUtournament" />
             </>
           ) : (
             <>
               <button className="btnRound" onClick={handleHomepageLockBtn}>
                 {!!currentTournamentLocked ? (
-                  <img src={unlock_icon} alt="unlock" />
+                  <img
+                    src={unlock_icon}
+                    alt="unlock"
+                    data-tooltip-content="Allow betting on tournament"
+                    data-tooltip-id="lock"
+                  />
                 ) : (
-                  <img src={lock_icon} alt="lock" />
+                  <img
+                    src={lock_icon}
+                    alt="lock"
+                    data-tooltip-content="Disallow betting on tournament"
+                    data-tooltip-id="lock"
+                  />
                 )}
               </button>
+              <Tooltip id="lock" />
               <button className="btnRound" onClick={() => setEditTournament(2)}>
-                <img src={edit_icon} alt="Edit" />
+                <img
+                  src={edit_icon}
+                  alt="Edit"
+                  data-tooltip-content="Edit tournament date"
+                  data-tooltip-id="editDate"
+                />
               </button>
               <button className="btnRound" onClick={() => setEditTournament(1)}>
-                <img src={add_icon} alt="Add" />
+                <img
+                  src={add_icon}
+                  alt="Add"
+                  data-tooltip-content="Add tournament"
+                  data-tooltip-id="editDate"
+                />
               </button>
+              <Tooltip id="editDate" />
             </>
           ))}
       </div>
       <div
         className={`d-flex flex-fill flex-wrap align-items-center justify-content-center`}
-        // className={`${style.container} d-flex flex-fill flex-wrap align-items-center justify-content-center`}
       >
         {poolsList &&
           poolsList.map((e) => {
